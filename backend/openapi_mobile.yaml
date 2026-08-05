@@ -1,0 +1,1087 @@
+openapi: 3.0.3
+info:
+  title: Aether API Mobile
+  version: 2.0.0
+  description: API REST para os casos Mobile e Mobile + PC do TCC.
+servers:
+  - url: http://localhost:8080/api/mobile
+paths:
+  /saude:
+    get:
+      operationId: health
+      summary: health
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /auth/login:
+    post:
+      operationId: login
+      summary: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /auth/recuperacao/solicitar:
+    post:
+      operationId: requestPasswordRecovery
+      summary: requestPasswordRecovery
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /auth/recuperacao/confirmar:
+    post:
+      operationId: confirmPasswordRecovery
+      summary: confirmPasswordRecovery
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /dashboard:
+    get:
+      operationId: dashboard
+      summary: dashboard
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /modalidades:
+    get:
+      operationId: modalities
+      summary: modalities
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /categorias:
+    get:
+      operationId: categories
+      summary: categories
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /perfil/escola:
+    get:
+      operationId: ownSchoolProfile
+      summary: ownSchoolProfile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+    put:
+      operationId: updateOwnSchoolProfile
+      summary: updateOwnSchoolProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /escolas:
+    get:
+      operationId: listSchools
+      summary: listSchools
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /escolas/{id}:
+    get:
+      operationId: schoolDetail
+      summary: schoolDetail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /alunos:
+    get:
+      operationId: listStudents
+      summary: listStudents
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+    post:
+      operationId: createStudent
+      summary: createStudent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /rankings/individual:
+    get:
+      operationId: individualRanking
+      summary: individualRanking
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /alunos/{id}/historico:
+    get:
+      operationId: studentHistory
+      summary: studentHistory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /alunos/{id}/estatisticas:
+    get:
+      operationId: studentStatistics
+      summary: studentStatistics
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /alunos/{id}:
+    get:
+      operationId: studentDetail
+      summary: studentDetail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+    put:
+      operationId: updateStudent
+      summary: updateStudent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /times:
+    get:
+      operationId: listTeams
+      summary: listTeams
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+    post:
+      operationId: createTeam
+      summary: createTeam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /times/{id}/ranking:
+    get:
+      operationId: teamPerformance
+      summary: teamPerformance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /times/{id}/capitao:
+    put:
+      operationId: defineCaptain
+      summary: defineCaptain
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /times/{id}/escalacao:
+    put:
+      operationId: saveLineup
+      summary: saveLineup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /times/{id}/atletas/{alunoId}:
+    post:
+      operationId: linkAthlete
+      summary: linkAthlete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: alunoId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+    patch:
+      operationId: updateAthleteRole
+      summary: updateAthleteRole
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: alunoId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+    delete:
+      operationId: unlinkAthlete
+      summary: unlinkAthlete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: alunoId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /times/{id}:
+    get:
+      operationId: teamDetail
+      summary: teamDetail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+    put:
+      operationId: updateTeam
+      summary: updateTeam
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /competicoes:
+    get:
+      operationId: listCompetitions
+      summary: listCompetitions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /competicoes/{id}/classificacao:
+    get:
+      operationId: competitionStandings
+      summary: competitionStandings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /competicoes/{id}/tabela:
+    get:
+      operationId: tablesAndStandings
+      summary: tablesAndStandings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /competicoes/{id}/inscricoes:
+    post:
+      operationId: enrollTeam
+      summary: enrollTeam
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /competicoes/{id}:
+    get:
+      operationId: competitionDetail
+      summary: competitionDetail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /calendario:
+    get:
+      operationId: calendar
+      summary: calendar
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /partidas/{id}/calendario:
+    put:
+      operationId: scheduleMatch
+      summary: scheduleMatch
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /locais:
+    get:
+      operationId: listLocations
+      summary: listLocations
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+    post:
+      operationId: createLocation
+      summary: createLocation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /partidas/{id}/local:
+    put:
+      operationId: assignLocation
+      summary: assignLocation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /partidas/ao-vivo:
+    get:
+      operationId: liveMatches
+      summary: liveMatches
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /partidas/historico:
+    get:
+      operationId: matchHistory
+      summary: matchHistory
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /partidas/{id}/ao-vivo:
+    get:
+      operationId: liveMatchDetail
+      summary: liveMatchDetail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /partidas/{id}/iniciar:
+    patch:
+      operationId: startMatch
+      summary: startMatch
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /partidas/{id}/arbitragem:
+    post:
+      operationId: assignReferee
+      summary: assignReferee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /partidas/{id}/resultado:
+    put:
+      operationId: registerResult
+      summary: registerResult
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /partidas/{id}/pontuacoes:
+    post:
+      operationId: registerScore
+      summary: registerScore
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /partidas/{id}/penalidades:
+    post:
+      operationId: registerPenalty
+      summary: registerPenalty
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /partidas/{id}/publicar:
+    post:
+      operationId: publishResult
+      summary: publishResult
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /rankings/escolas:
+    get:
+      operationId: schoolRanking
+      summary: schoolRanking
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+  /rankings/equipes:
+    get:
+      operationId: teamRanking
+      summary: teamRanking
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operação realizada com sucesso.
+        '400':
+          description: Dados inválidos.
+        '401':
+          description: Token ausente ou inválido.
+        '403':
+          description: Perfil sem permissão.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

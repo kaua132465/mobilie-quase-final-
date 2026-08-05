@@ -1,0 +1,25 @@
+# Flutter / Dart
+**/.dart_tool/
+**/build/
+**/.gradle/
+**/.flutter-plugins-dependencies
+**/android/local.properties
+**/*.apk
+**/*.aab
+
+# IDE
+**/.idea/
+**/.vscode/
+
+# Ambiente e segredos
+**/.env
+**/.env.*
+!**/.env.example
+
+# Cobertura e logs
+**/coverage/
+**/*.log
+
+# Sistema operacional
+Thumbs.db
+.DS_Store
