@@ -201,10 +201,7 @@ class MobileRepository {
           VALUES
             (@usuarioId, 'INICIAR_PARTIDA', 'PARTIDA', @partidaId)
         '''),
-        parameters: {
-          'usuarioId': actorUserId,
-          'partidaId': matchId,
-        },
+        parameters: {'usuarioId': actorUserId, 'partidaId': matchId},
       );
       return updated.single.toColumnMap();
     });
@@ -405,10 +402,7 @@ class MobileRepository {
         ORDER BY pontos DESC, saldo DESC, pontos_pro DESC, t.nome
         LIMIT @limite
       '''),
-      parameters: {
-        'modalidadeId': _nullable(modalityId),
-        'limite': limit,
-      },
+      parameters: {'modalidadeId': _nullable(modalityId), 'limite': limit},
     );
     return _withPositions(result.map((row) => row.toColumnMap()).toList());
   }
@@ -462,9 +456,7 @@ class MobileRepository {
     };
   }
 
-  List<Map<String, dynamic>> _withPositions(
-    List<Map<String, dynamic>> items,
-  ) {
+  List<Map<String, dynamic>> _withPositions(List<Map<String, dynamic>> items) {
     return [
       for (var index = 0; index < items.length; index++)
         {'posicao': index + 1, ...items[index]},

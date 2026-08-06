@@ -77,7 +77,7 @@ demorar alguns minutos.
 Quando aparecer a mensagem abaixo, a API estará pronta:
 
 ```text
-Aether API (geral + mobile) disponível em http://0.0.0.0:8080
+ACE API (geral + mobile) disponível em http://0.0.0.0:8080
 ```
 
 Também é possível iniciar clicando duas vezes em:
@@ -214,10 +214,10 @@ Admin@123
 Contas:
 
 ```text
-admin@aether.local
-escola@aether.local
-atleta@aether.local
-arbitro@aether.local
+admin@ace.local
+escola@ace.local
+atleta@ace.local
+arbitro@ace.local
 ```
 
 ## 9. Liberar a porta no Firewall do Windows

@@ -16,7 +16,9 @@ class PartidaRepository {
     String role,
     String actorUserId,
   ) async {
-    final normalizedRole = role.trim().isEmpty ? 'PRINCIPAL' : role.trim().toUpperCase();
+    final normalizedRole = role.trim().isEmpty
+        ? 'PRINCIPAL'
+        : role.trim().toUpperCase();
 
     return _database.pool.runTx((tx) async {
       final validation = await tx.execute(
@@ -34,7 +36,10 @@ class PartidaRepository {
         parameters: {'partidaId': matchId, 'arbitroId': refereeId},
       );
       if (validation.isEmpty) {
-        throw const ApiException(409, 'Partida ou árbitro inválido para a operação.');
+        throw const ApiException(
+          409,
+          'Partida ou árbitro inválido para a operação.',
+        );
       }
 
       final conflict = await tx.execute(
@@ -54,7 +59,10 @@ class PartidaRepository {
         parameters: {'partidaId': matchId, 'arbitroId': refereeId},
       );
       if (conflict.isNotEmpty) {
-        throw const ApiException(409, 'O árbitro já possui uma partida no mesmo horário.');
+        throw const ApiException(
+          409,
+          'O árbitro já possui uma partida no mesmo horário.',
+        );
       }
 
       await tx.execute(
@@ -86,18 +94,17 @@ class PartidaRepository {
 
       if (normalizedRole == 'PRINCIPAL') {
         await tx.execute(
-          Sql.named('UPDATE partida SET arbitro_id = @arbitroId, atualizado_em = NOW() WHERE id = @partidaId'),
+          Sql.named(
+            'UPDATE partida SET arbitro_id = @arbitroId, atualizado_em = NOW() WHERE id = @partidaId',
+          ),
           parameters: {'partidaId': matchId, 'arbitroId': refereeId},
         );
       }
 
-      await _auditWithTx(
-        tx,
-        actorUserId,
-        'REGISTRAR_ARBITRAGEM',
-        matchId,
-        {'arbitroId': refereeId, 'funcao': normalizedRole},
-      );
+      await _auditWithTx(tx, actorUserId, 'REGISTRAR_ARBITRAGEM', matchId, {
+        'arbitroId': refereeId,
+        'funcao': normalizedRole,
+      });
       return result.single.toColumnMap();
     });
   }
@@ -109,7 +116,10 @@ class PartidaRepository {
     String actorUserId,
   ) async {
     if (homeScore < 0 || awayScore < 0) {
-      throw const ApiException(400, 'O placar não pode possuir valores negativos.');
+      throw const ApiException(
+        400,
+        'O placar não pode possuir valores negativos.',
+      );
     }
 
     return _database.pool.runTx((tx) async {
@@ -132,15 +142,15 @@ class PartidaRepository {
         },
       );
       if (result.isEmpty) {
-        throw const ApiException(409, 'Partida não encontrada ou já encerrada.');
+        throw const ApiException(
+          409,
+          'Partida não encontrada ou já encerrada.',
+        );
       }
-      await _auditWithTx(
-        tx,
-        actorUserId,
-        'REGISTRAR_RESULTADO',
-        matchId,
-        {'placarCasa': homeScore, 'placarVisitante': awayScore},
-      );
+      await _auditWithTx(tx, actorUserId, 'REGISTRAR_RESULTADO', matchId, {
+        'placarCasa': homeScore,
+        'placarVisitante': awayScore,
+      });
       return result.single.toColumnMap();
     });
   }
@@ -189,7 +199,10 @@ class PartidaRepository {
         },
       );
       if (event.isEmpty) {
-        throw const ApiException(409, 'Partida, time ou atleta inválido para registrar a pontuação.');
+        throw const ApiException(
+          409,
+          'Partida, time ou atleta inválido para registrar a pontuação.',
+        );
       }
 
       if (athleteId != null && athleteId.isNotEmpty) {
@@ -224,18 +237,12 @@ class PartidaRepository {
         parameters: {'partidaId': matchId, 'timeId': teamId, 'pontos': points},
       );
 
-      await _auditWithTx(
-        tx,
-        actorUserId,
-        'REGISTRAR_PONTUACAO',
-        matchId,
-        {
-          'timeId': teamId,
-          'alunoId': athleteId,
-          'pontos': points,
-          'minuto': data['minuto'],
-        },
-      );
+      await _auditWithTx(tx, actorUserId, 'REGISTRAR_PONTUACAO', matchId, {
+        'timeId': teamId,
+        'alunoId': athleteId,
+        'pontos': points,
+        'minuto': data['minuto'],
+      });
       return {
         'evento': event.single.toColumnMap(),
         'placar': score.single.toColumnMap(),
@@ -249,7 +256,12 @@ class PartidaRepository {
     String actorUserId,
   ) async {
     final type = data['tipo']?.toString().toUpperCase();
-    const allowed = {'FALTA', 'CARTAO_AMARELO', 'CARTAO_VERMELHO', 'PENALIDADE'};
+    const allowed = {
+      'FALTA',
+      'CARTAO_AMARELO',
+      'CARTAO_VERMELHO',
+      'PENALIDADE',
+    };
     if (type == null || !allowed.contains(type)) {
       throw const ApiException(400, 'Tipo de penalidade inválido.');
     }
@@ -290,7 +302,10 @@ class PartidaRepository {
         },
       );
       if (result.isEmpty) {
-        throw const ApiException(409, 'Não foi possível registrar a falta ou penalidade.');
+        throw const ApiException(
+          409,
+          'Não foi possível registrar a falta ou penalidade.',
+        );
       }
 
       final athleteId = data['alunoId']?.toString();
@@ -320,18 +335,12 @@ class PartidaRepository {
           );
         }
       }
-      await _auditWithTx(
-        tx,
-        actorUserId,
-        'REGISTRAR_PENALIDADE',
-        matchId,
-        {
-          'timeId': teamId,
-          'alunoId': data['alunoId'],
-          'tipo': type,
-          'minuto': data['minuto'],
-        },
-      );
+      await _auditWithTx(tx, actorUserId, 'REGISTRAR_PENALIDADE', matchId, {
+        'timeId': teamId,
+        'alunoId': data['alunoId'],
+        'tipo': type,
+        'minuto': data['minuto'],
+      });
       return result.single.toColumnMap();
     });
   }
@@ -398,16 +407,24 @@ class PartidaRepository {
     final report = await matchReport(matchId);
     final match = Map<String, dynamic>.from(report['partida'] as Map);
     if (match['status']?.toString() != 'ENCERRADA') {
-      throw const ApiException(409, 'A súmula definitiva exige uma partida encerrada.');
+      throw const ApiException(
+        409,
+        'A súmula definitiva exige uma partida encerrada.',
+      );
     }
 
     return _database.pool.runTx((tx) async {
       final locked = await tx.execute(
-        Sql.named("SELECT id FROM partida WHERE id = @id AND status = 'ENCERRADA' FOR UPDATE"),
+        Sql.named(
+          "SELECT id FROM partida WHERE id = @id AND status = 'ENCERRADA' FOR UPDATE",
+        ),
         parameters: {'id': matchId},
       );
       if (locked.isEmpty) {
-        throw const ApiException(409, 'A partida não está disponível para emissão da súmula.');
+        throw const ApiException(
+          409,
+          'A partida não está disponível para emissão da súmula.',
+        );
       }
       final result = await tx.execute(
         Sql.named('''
@@ -426,17 +443,10 @@ class PartidaRepository {
           'usuarioId': actorUserId,
         },
       );
-      await _auditWithTx(
-        tx,
-        actorUserId,
-        'EMITIR_SUMULA',
-        matchId,
-        {'versao': result.single.toColumnMap()['versao']},
-      );
-      return {
-        ...result.single.toColumnMap(),
-        'conteudo': report,
-      };
+      await _auditWithTx(tx, actorUserId, 'EMITIR_SUMULA', matchId, {
+        'versao': result.single.toColumnMap()['versao'],
+      });
+      return {...result.single.toColumnMap(), 'conteudo': report};
     });
   }
 

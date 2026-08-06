@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import '../core/app_scope.dart';
@@ -23,6 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool _loading = true;
   Object? _error;
   Map<String, dynamic> _dashboard = {};
+  Map<String, dynamic> _athlete = {};
 
   @override
   void initState() {
@@ -36,7 +39,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       _error = null;
     });
     try {
-      _dashboard = asMap(await AppScope.read(context).client.get('/dashboard'));
+      final session = AppScope.read(context);
+      _dashboard = asMap(await session.client.get('/dashboard'));
+      if (session.profile == 'ALUNO' && session.studentId != null) {
+        _athlete = asMap(
+          await session.client.get('/alunos/${session.studentId}'),
+        );
+      }
     } catch (error) {
       _error = error;
     } finally {
@@ -54,6 +63,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final live = asList(_dashboard['partidasAoVivo']);
     final upcoming = asList(_dashboard['proximosJogos']);
     final ranking = asList(_dashboard['rankingEscolas']);
+    final athletePhoto = _athletePhoto();
 
     return RefreshIndicator(
       onRefresh: _load,
@@ -64,7 +74,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             padding: const EdgeInsets.all(22),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [AetherColors.navy, AetherColors.blue],
+                colors: [AceColors.navy, AceColors.blue],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -72,16 +82,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             child: Row(
               children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
+                if (session.profile == 'ALUNO' && athletePhoto != null)
+                  CircleAvatar(
+                    radius: 36,
+                    backgroundColor: AceColors.beige,
+                    backgroundImage: athletePhoto,
+                  )
+                else
+                  Container(
+                    width: 64,
+                    height: 64,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const AceLogo(),
                   ),
-                  child: const AetherLogo(),
-                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -270,6 +287,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     'ORGANIZADOR' => 'Organizador de competições',
     _ => profile,
   };
+
+  MemoryImage? _athletePhoto() {
+    final encoded = _athlete['foto_base64']?.toString();
+    if (encoded == null || encoded.isEmpty) return null;
+    try {
+      return MemoryImage(base64Decode(encoded));
+    } on FormatException {
+      return null;
+    }
+  }
 }
 
 class _QuickActions extends StatelessWidget {
@@ -336,7 +363,7 @@ class _QuickActions extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(action.icon, color: AetherColors.navy),
+                  Icon(action.icon, color: AceColors.orange),
                   const Spacer(),
                   Text(
                     action.label,
@@ -371,11 +398,9 @@ class _RankingPreviewRow extends StatelessWidget {
       children: [
         CircleAvatar(
           backgroundColor: position <= 3
-              ? AetherColors.orange.withValues(alpha: .18)
-              : AetherColors.beigeStrong,
-          foregroundColor: position <= 3
-              ? AetherColors.orange
-              : AetherColors.navy,
+              ? AceColors.orange.withValues(alpha: .18)
+              : AceColors.beigeStrong,
+          foregroundColor: position <= 3 ? AceColors.orange : AceColors.navy,
           child: Text(
             '$positionº',
             style: const TextStyle(fontWeight: FontWeight.w900),
@@ -392,7 +417,7 @@ class _RankingPreviewRow extends StatelessWidget {
           '${intOf(data, ['pontos'])} pts',
           style: const TextStyle(
             fontWeight: FontWeight.w900,
-            color: AetherColors.navy,
+            color: AceColors.navy,
           ),
         ),
       ],

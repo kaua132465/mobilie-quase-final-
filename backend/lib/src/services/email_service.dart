@@ -22,7 +22,7 @@ class EmailService {
       username: environment['SMTP_USERNAME']?.trim() ?? '',
       password: environment['SMTP_PASSWORD'] ?? '',
       fromEmail: environment['SMTP_FROM_EMAIL']?.trim() ?? '',
-      fromName: environment['SMTP_FROM_NAME']?.trim() ?? 'Aether',
+      fromName: environment['SMTP_FROM_NAME']?.trim() ?? 'ACE',
       ssl: (environment['SMTP_SSL'] ?? '').toLowerCase() == 'true',
     );
   }
@@ -58,15 +58,17 @@ class EmailService {
     final message = Message()
       ..from = Address(fromEmail, fromName)
       ..recipients.add(Address(recipientEmail, recipientName))
-      ..subject = 'Código de redefinição de senha - Aether'
-      ..text = '''
+      ..subject = 'Código de redefinição de senha - ACE'
+      ..text =
+          '''
 Olá, $recipientName!
 
 Seu código de redefinição de senha é: $code
 
 O código expira em 15 minutos. Se você não solicitou a redefinição, ignore este e-mail.
 '''
-      ..html = '''
+      ..html =
+          '''
 <h2>Redefinição de senha</h2>
 <p>Olá, ${_escapeHtml(recipientName)}!</p>
 <p>Use o código abaixo para redefinir sua senha:</p>

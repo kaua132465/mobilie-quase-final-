@@ -56,10 +56,10 @@ O celular e o computador precisam estar na mesma rede.
 
 Senha para todas as contas: `Admin@123`
 
-- `admin@aether.local`
-- `escola@aether.local`
-- `atleta@aether.local`
-- `arbitro@aether.local`
+- `admin@ace.local`
+- `escola@ace.local`
+- `atleta@ace.local`
+- `arbitro@ace.local`
 
 ## Observações
 

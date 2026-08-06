@@ -51,7 +51,10 @@ class DocumentoRepository {
     final base64Content = data['arquivoBase64']?.toString();
     final url = data['urlArquivo']?.toString().trim();
 
-    if (typeId == null || typeId.isEmpty || fileName.isEmpty || mimeType.isEmpty) {
+    if (typeId == null ||
+        typeId.isEmpty ||
+        fileName.isEmpty ||
+        mimeType.isEmpty) {
       throw const ApiException(
         400,
         'Informe tipoDocumentoId, nomeArquivo e mimeType.',
@@ -67,7 +70,10 @@ class DocumentoRepository {
       try {
         bytes = base64Decode(base64Content);
       } on FormatException {
-        throw const ApiException(400, 'O conteúdo Base64 do arquivo é inválido.');
+        throw const ApiException(
+          400,
+          'O conteúdo Base64 do arquivo é inválido.',
+        );
       }
     }
 
@@ -86,7 +92,8 @@ class DocumentoRepository {
     final extension = fileName.contains('.')
         ? fileName.split('.').last.toLowerCase()
         : '';
-    final allowedExtensions = (type['extensoes_permitidas'] as List?)
+    final allowedExtensions =
+        (type['extensoes_permitidas'] as List?)
             ?.map((item) => item.toString().toLowerCase())
             .toSet() ??
         <String>{};
@@ -96,9 +103,13 @@ class DocumentoRepository {
         'Extensão não permitida. Use: ${allowedExtensions.join(', ')}.',
       );
     }
-    final size = bytes?.length ?? int.tryParse(data['tamanhoBytes']?.toString() ?? '');
+    final size =
+        bytes?.length ?? int.tryParse(data['tamanhoBytes']?.toString() ?? '');
     if (size == null || size < 0) {
-      throw const ApiException(400, 'Informe tamanhoBytes para documentos por URL.');
+      throw const ApiException(
+        400,
+        'Informe tamanhoBytes para documentos por URL.',
+      );
     }
     final maxSize = int.parse(type['tamanho_maximo_bytes'].toString());
     if (size > maxSize) {
@@ -309,7 +320,8 @@ class DocumentoRepository {
       throw const ApiException(400, 'Decisão de validação inválida.');
     }
     final justification = data['justificativa']?.toString().trim();
-    if (status != 'APROVADA' && (justification == null || justification.isEmpty)) {
+    if (status != 'APROVADA' &&
+        (justification == null || justification.isEmpty)) {
       throw const ApiException(400, 'Informe a justificativa da decisão.');
     }
 
@@ -349,13 +361,10 @@ class DocumentoRepository {
           'usuarioId': actorUserId,
         },
       );
-      await _audit(
-        tx,
-        actorUserId,
-        'VALIDAR_DOCUMENTO',
-        documentId,
-        {'status': status, 'justificativa': justification},
-      );
+      await _audit(tx, actorUserId, 'VALIDAR_DOCUMENTO', documentId, {
+        'status': status,
+        'justificativa': justification,
+      });
       return updated.single.toColumnMap();
     });
   }

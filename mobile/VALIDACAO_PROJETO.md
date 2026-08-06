@@ -5,7 +5,7 @@
 - Estrutura Flutter com `pubspec.yaml`, `lib`, `assets`, `android`, `web` e `test`.
 - Todos os imports locais apontam para arquivos existentes.
 - Todas as classes de tela utilizadas na navegação foram localizadas no projeto.
-- Identidade visual Aether incluída em assets e ícones Android/Web.
+- Identidade visual ACE incluída em assets e ícones Android/Web.
 - URL padrão separada por plataforma:
   - Android Emulator: `http://10.0.2.2:8080/api/mobile`;
   - Web/desktop: `http://localhost:8080/api/mobile`;

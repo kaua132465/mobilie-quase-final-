@@ -1,4 +1,4 @@
-# Aether - Back-end Mobile em Dart e PostgreSQL
+# ACE - Back-end Mobile em Dart e PostgreSQL
 
 API REST do **Sistema de Gestão Esportiva Escolar**, adaptada aos wireframes Mobile e ao arquivo **Divisão por Dispositivo**.
 
@@ -54,10 +54,10 @@ Todas usam a senha `Admin@123`.
 
 | Perfil | E-mail |
 |---|---|
-| Administrador | `admin@aether.local` |
-| Escola | `escola@aether.local` |
-| Aluno/atleta | `atleta@aether.local` |
-| Árbitro | `arbitro@aether.local` |
+| Administrador | `admin@ace.local` |
+| Escola | `escola@ace.local` |
+| Aluno/atleta | `atleta@ace.local` |
+| Árbitro | `arbitro@ace.local` |
 
 ## Endereços para o Flutter
 

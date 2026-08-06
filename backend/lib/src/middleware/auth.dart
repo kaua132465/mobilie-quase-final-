@@ -30,12 +30,14 @@ Middleware jwtAuthentication() {
           throw const ApiException(401, 'Token sem identificação do usuário.');
         }
         return innerHandler(
-          request.change(context: {
-            'usuarioId': userId,
-            'perfil': payload['perfil']?.toString(),
-            'alunoId': payload['alunoId']?.toString(),
-            'escolaId': payload['escolaId']?.toString(),
-          }),
+          request.change(
+            context: {
+              'usuarioId': userId,
+              'perfil': payload['perfil']?.toString(),
+              'alunoId': payload['alunoId']?.toString(),
+              'escolaId': payload['escolaId']?.toString(),
+            },
+          ),
         );
       } on JWTExpiredException {
         throw const ApiException(401, 'Token expirado.');

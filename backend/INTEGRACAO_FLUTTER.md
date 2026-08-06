@@ -1,4 +1,4 @@
-# Integração do Flutter com a Aether API
+# Integração do Flutter com a ACE API
 
 O aplicativo Flutter deve consumir a API por HTTP. Ele **não deve acessar o PostgreSQL diretamente**.
 
@@ -31,8 +31,8 @@ class ApiException implements Exception {
   String toString() => 'ApiException($statusCode): $message';
 }
 
-class AetherApi {
-  AetherApi({
+class ACEApi {
+  ACEApi({
     required this.baseUrl,
     http.Client? client,
     FlutterSecureStorage? storage,

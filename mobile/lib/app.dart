@@ -8,8 +8,8 @@ import 'core/update_checker.dart';
 import 'screens/auth_screens.dart';
 import 'screens/shell_screen.dart';
 
-class AetherApp extends StatelessWidget {
-  const AetherApp({required this.session, super.key});
+class AceApp extends StatelessWidget {
+  const AceApp({required this.session, super.key});
 
   final SessionController session;
 
@@ -18,9 +18,9 @@ class AetherApp extends StatelessWidget {
     return AppScope(
       controller: session,
       child: MaterialApp(
-        title: 'Aether',
+        title: 'ACE',
         debugShowCheckedModeBanner: false,
-        theme: buildAetherTheme(),
+        theme: buildAceTheme(),
         locale: const Locale('pt', 'BR'),
         supportedLocales: const [Locale('pt', 'BR')],
         localizationsDelegates: const [
@@ -41,13 +41,35 @@ class SessionGate extends StatelessWidget {
   Widget build(BuildContext context) {
     final session = AppScope.of(context);
     if (!session.initialized) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const _AceSplashScreen();
     }
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 280),
       child: session.isAuthenticated
           ? const MainShell(key: ValueKey('shell'))
           : const LoginScreen(key: ValueKey('login')),
+    );
+  }
+}
+
+class _AceSplashScreen extends StatelessWidget {
+  const _AceSplashScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: AceColors.navy,
+      body: SafeArea(
+        child: Center(
+          child: FractionallySizedBox(
+            widthFactor: .88,
+            child: Image(
+              image: AssetImage('assets/images/ace_logo.png'),
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import '../core/app_scope.dart';
+import '../core/data_helpers.dart';
 import '../core/theme.dart';
 import '../widgets/common.dart';
 import 'auth_screens.dart';
@@ -11,20 +14,47 @@ import 'school_screens.dart';
 import 'student_screens.dart';
 import 'team_screens.dart';
 
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
+
+  @override
+  State<MenuScreen> createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> {
+  Map<String, dynamic> _athlete = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAthlete();
+  }
+
+  Future<void> _loadAthlete() async {
+    final session = AppScope.read(context);
+    if (session.profile != 'ALUNO' || session.studentId == null) return;
+    try {
+      final athlete = asMap(
+        await session.client.get('/alunos/${session.studentId}'),
+      );
+      if (mounted) setState(() => _athlete = athlete);
+    } catch (_) {
+      // Mantém as iniciais como fallback se a foto não puder ser carregada.
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final session = AppScope.of(context);
     final profile = session.profile;
+    final athletePhoto = _athletePhoto();
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 30),
       children: [
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: AetherColors.navy,
+            color: AceColors.navy,
             borderRadius: BorderRadius.circular(24),
           ),
           child: Row(
@@ -32,14 +62,17 @@ class MenuScreen extends StatelessWidget {
               CircleAvatar(
                 radius: 30,
                 backgroundColor: Colors.white,
-                child: Text(
-                  _initials(session.userName),
-                  style: const TextStyle(
-                    color: AetherColors.navy,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 18,
-                  ),
-                ),
+                backgroundImage: athletePhoto,
+                child: athletePhoto == null
+                    ? Text(
+                        _initials(session.userName),
+                        style: const TextStyle(
+                          color: AceColors.navy,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 18,
+                        ),
+                      )
+                    : null,
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -159,7 +192,7 @@ class MenuScreen extends StatelessWidget {
         const SizedBox(height: 10),
         _MenuTile(
           icon: Icons.info_outline,
-          title: 'Sobre o Aether',
+          title: 'Sobre o ACE',
           subtitle: 'TCC — gestão esportiva escolar',
           onTap: () => pushPage(context, const AboutScreen()),
         ),
@@ -223,6 +256,16 @@ class MenuScreen extends StatelessWidget {
     }
     return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
+
+  MemoryImage? _athletePhoto() {
+    final encoded = _athlete['foto_base64']?.toString();
+    if (encoded == null || encoded.isEmpty) return null;
+    try {
+      return MemoryImage(base64Decode(encoded));
+    } on FormatException {
+      return null;
+    }
+  }
 }
 
 class _MenuTile extends StatelessWidget {
@@ -242,7 +285,7 @@ class _MenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = danger ? AetherColors.danger : AetherColors.navy;
+    final color = danger ? AceColors.danger : AceColors.navy;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: SurfaceCard(
@@ -294,7 +337,7 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sobre o Aether')),
+      appBar: AppBar(title: const Text('Sobre o ACE')),
       body: PageBody(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,11 +353,11 @@ class AboutScreen extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(28),
                     ),
-                    child: const AetherLogo(),
+                    child: const AceLogo(),
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    'Aether',
+                    'ACE',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.w900,
                     ),
@@ -355,7 +398,7 @@ class AboutScreen extends StatelessWidget {
             const SizedBox(height: 14),
             const Center(
               child: Text(
-                'Projeto de TCC • Aether • 2026',
+                'Projeto de TCC • ACE • 2026',
                 style: TextStyle(color: Colors.black54),
               ),
             ),
@@ -378,7 +421,7 @@ class _FeatureLine extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.check_circle, color: AetherColors.success, size: 19),
+          const Icon(Icons.check_circle, color: AceColors.success, size: 19),
           const SizedBox(width: 9),
           Expanded(child: Text(text)),
         ],

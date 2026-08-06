@@ -1,4 +1,4 @@
-# Matriz de endpoints — Aether API
+# Matriz de endpoints — ACE API
 
 A URL-base dos exemplos é `http://localhost:8080`. Todas as rotas, exceto saúde e login, exigem um token JWT:
 
@@ -88,7 +88,7 @@ Datas e horas devem usar ISO 8601, por exemplo `2026-08-10T14:00:00-03:00`.
 
 ```json
 {
-  "email": "admin@aether.local",
+  "email": "admin@ace.local",
   "senha": "Admin@123"
 }
 ```

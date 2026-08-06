@@ -40,9 +40,9 @@ class _RankingsScreenState extends State<RankingsScreen>
           color: Colors.white,
           child: TabBar(
             controller: _tabs,
-            labelColor: AetherColors.navy,
+            labelColor: AceColors.navy,
             unselectedLabelColor: Colors.black45,
-            indicatorColor: AetherColors.navy,
+            indicatorColor: AceColors.navy,
             tabs: const [
               Tab(text: 'Escolas'),
               Tab(text: 'Equipes'),
@@ -271,8 +271,8 @@ class _RankingCard extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: position <= 3
-                  ? AetherColors.orange.withValues(alpha: .15)
-                  : AetherColors.beigeStrong,
+                  ? AceColors.orange.withValues(alpha: .15)
+                  : AceColors.beigeStrong,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
@@ -280,7 +280,7 @@ class _RankingCard extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w900,
                 fontSize: 17,
-                color: position <= 3 ? AetherColors.orange : AetherColors.navy,
+                color: position <= 3 ? AceColors.orange : AceColors.navy,
               ),
             ),
           ),
@@ -302,10 +302,7 @@ class _RankingCard extends StatelessWidget {
                   const SizedBox(height: 5),
                   Text(
                     '${intOf(data, ['assistencias'])} assistências • Nota ${doubleOf(data, ['media_nota']).toStringAsFixed(1)}',
-                    style: const TextStyle(
-                      color: AetherColors.navy,
-                      fontSize: 12,
-                    ),
+                    style: const TextStyle(color: AceColors.navy, fontSize: 12),
                   ),
                 ],
               ],
@@ -319,7 +316,7 @@ class _RankingCard extends StatelessWidget {
                 style: const TextStyle(
                   fontWeight: FontWeight.w900,
                   fontSize: 22,
-                  color: AetherColors.navy,
+                  color: AceColors.navy,
                 ),
               ),
               const Text(

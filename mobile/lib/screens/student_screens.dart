@@ -114,7 +114,7 @@ class _StudentListScreenState extends State<StudentListScreen> {
                     children: [
                       CircleAvatar(
                         radius: 25,
-                        backgroundColor: AetherColors.beigeStrong,
+                        backgroundColor: AceColors.beigeStrong,
                         backgroundImage: photo,
                         child: photo == null
                             ? Text(
@@ -123,7 +123,7 @@ class _StudentListScreenState extends State<StudentListScreen> {
                                 ], fallback: 'A').substring(0, 1).toUpperCase(),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w900,
-                                  color: AetherColors.navy,
+                                  color: AceColors.navy,
                                 ),
                               )
                             : null,
@@ -490,7 +490,7 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                             borderRadius: BorderRadius.circular(64),
                             child: CircleAvatar(
                               radius: 58,
-                              backgroundColor: AetherColors.beigeStrong,
+                              backgroundColor: AceColors.beigeStrong,
                               backgroundImage: _photoBytes == null
                                   ? null
                                   : MemoryImage(_photoBytes!),
@@ -498,7 +498,7 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                                   ? const Icon(
                                       Icons.add_a_photo_outlined,
                                       size: 38,
-                                      color: AetherColors.navy,
+                                      color: AceColors.navy,
                                     )
                                   : null,
                             ),
@@ -789,7 +789,7 @@ class _ProfileTab extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 48,
-            backgroundColor: AetherColors.beigeStrong,
+            backgroundColor: AceColors.beigeStrong,
             backgroundImage: photo,
             child: photo == null
                 ? Text(
@@ -797,7 +797,7 @@ class _ProfileTab extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 34,
                       fontWeight: FontWeight.w900,
-                      color: AetherColors.navy,
+                      color: AceColors.navy,
                     ),
                   )
                 : null,
@@ -907,13 +907,13 @@ class _StatisticsTab extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           SurfaceCard(
-            color: AetherColors.navy,
+            color: AceColors.navy,
             child: Row(
               children: [
                 const Icon(
                   Icons.star_rounded,
                   size: 48,
-                  color: AetherColors.orange,
+                  color: AceColors.orange,
                 ),
                 const SizedBox(width: 14),
                 Expanded(

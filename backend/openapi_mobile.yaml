@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Aether API Mobile
+  title: ACE API Mobile
   version: 2.0.0
   description: API REST para os casos Mobile e Mobile + PC do TCC.
 servers:

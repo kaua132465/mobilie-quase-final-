@@ -65,7 +65,9 @@ Future<void> main() async {
 
   final port = int.tryParse(Platform.environment['PORT'] ?? '') ?? 8080;
   final server = await shelf_io.serve(handler, InternetAddress.anyIPv4, port);
-  print('Aether API (geral + mobile) disponível em http://${server.address.host}:${server.port}');
+  print(
+    'ACE API (geral + mobile) disponível em http://${server.address.host}:${server.port}',
+  );
 
   ProcessSignal.sigint.watch().listen((_) async {
     await server.close(force: true);

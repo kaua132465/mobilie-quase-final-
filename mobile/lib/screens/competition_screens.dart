@@ -131,12 +131,12 @@ class _CompetitionListScreenState extends State<CompetitionListScreen> {
                                     width: 48,
                                     height: 48,
                                     decoration: BoxDecoration(
-                                      color: AetherColors.beigeStrong,
+                                      color: AceColors.beigeStrong,
                                       borderRadius: BorderRadius.circular(14),
                                     ),
                                     child: const Icon(
                                       Icons.emoji_events_outlined,
-                                      color: AetherColors.navy,
+                                      color: AceColors.navy,
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -184,7 +184,7 @@ class _CompetitionListScreenState extends State<CompetitionListScreen> {
                                     '${intOf(item, ['times_inscritos'])} times',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w700,
-                                      color: AetherColors.navy,
+                                      color: AceColors.navy,
                                     ),
                                   ),
                                 ],
@@ -339,7 +339,7 @@ class _OverviewTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SurfaceCard(
-            color: AetherColors.navy,
+            color: AceColors.navy,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -506,13 +506,13 @@ class _StandingsTab extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundColor: index < 3
-                    ? AetherColors.orange.withValues(alpha: .18)
-                    : AetherColors.beigeStrong,
+                    ? AceColors.orange.withValues(alpha: .18)
+                    : AceColors.beigeStrong,
                 child: Text(
                   '${index + 1}º',
                   style: const TextStyle(
                     fontWeight: FontWeight.w900,
-                    color: AetherColors.navy,
+                    color: AceColors.navy,
                   ),
                 ),
               ),
@@ -542,7 +542,7 @@ class _StandingsTab extends StatelessWidget {
                     '${intOf(item, ['pontos'])} pts',
                     style: const TextStyle(
                       fontWeight: FontWeight.w900,
-                      color: AetherColors.navy,
+                      color: AceColors.navy,
                     ),
                   ),
                   Text(
@@ -592,7 +592,7 @@ class _CompetitionTableTab extends StatelessWidget {
                 ),
                 leading: const Icon(
                   Icons.account_tree_outlined,
-                  color: AetherColors.navy,
+                  color: AceColors.navy,
                 ),
                 title: Text(
                   textOf(phase, ['nome']),
@@ -790,12 +790,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 children: [
                   if (_from != null) ...[
                     SurfaceCard(
-                      color: AetherColors.beigeStrong,
+                      color: AceColors.beigeStrong,
                       child: Row(
                         children: [
                           const Icon(
                             Icons.filter_alt_outlined,
-                            color: AetherColors.navy,
+                            color: AceColors.navy,
                           ),
                           const SizedBox(width: 10),
                           Expanded(
@@ -969,10 +969,7 @@ class _ScheduleMatchScreenState extends State<ScheduleMatchScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),
-              leading: const Icon(
-                Icons.calendar_month,
-                color: AetherColors.navy,
-              ),
+              leading: const Icon(Icons.calendar_month, color: AceColors.navy),
               title: const Text('Data e horário'),
               subtitle: Text(
                 formatDate(_dateTime.toIso8601String(), withTime: true),
@@ -1096,12 +1093,12 @@ class _LocationsScreenState extends State<LocationsScreen> {
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: AetherColors.beigeStrong,
+                                color: AceColors.beigeStrong,
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: const Icon(
                                 Icons.stadium_outlined,
-                                color: AetherColors.navy,
+                                color: AceColors.navy,
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -1126,7 +1123,7 @@ class _LocationsScreenState extends State<LocationsScreen> {
                                       'Capacidade: ${item['capacidade']}',
                                       style: const TextStyle(
                                         fontSize: 12,
-                                        color: AetherColors.navy,
+                                        color: AceColors.navy,
                                       ),
                                     ),
                                 ],

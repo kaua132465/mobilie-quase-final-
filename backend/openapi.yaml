@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Aether API
+  title: ACE API
   version: 1.0.0
   description: API REST em Dart/Shelf e PostgreSQL para os 33 casos de uso atribuídos a Kauã (UC07–UC16 e UC31–UC53).
 servers:

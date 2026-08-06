@@ -335,10 +335,10 @@ class _SchoolListScreenState extends State<SchoolListScreen> {
                                   children: [
                                     const CircleAvatar(
                                       radius: 26,
-                                      backgroundColor: AetherColors.beigeStrong,
+                                      backgroundColor: AceColors.beigeStrong,
                                       child: Icon(
                                         Icons.school_outlined,
-                                        color: AetherColors.navy,
+                                        color: AceColors.navy,
                                       ),
                                     ),
                                     const SizedBox(width: 14),
@@ -512,7 +512,7 @@ class _SchoolHeader extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [AetherColors.navy, AetherColors.blue],
+          colors: [AceColors.navy, AceColors.blue],
         ),
         borderRadius: BorderRadius.circular(24),
       ),
@@ -521,7 +521,7 @@ class _SchoolHeader extends StatelessWidget {
           const CircleAvatar(
             radius: 34,
             backgroundColor: Colors.white,
-            child: Icon(Icons.school, size: 36, color: AetherColors.navy),
+            child: Icon(Icons.school, size: 36, color: AceColors.navy),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -563,7 +563,7 @@ class _MiniCount extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 15, color: AetherColors.navy),
+        Icon(icon, size: 15, color: AceColors.navy),
         const SizedBox(width: 4),
         Text(
           label,

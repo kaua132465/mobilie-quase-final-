@@ -112,10 +112,7 @@ class UsuarioRepository {
           LIMIT 1
           FOR UPDATE
         '''),
-        parameters: {
-          'email': normalizedEmail,
-          'codigoHash': codeHash,
-        },
+        parameters: {'email': normalizedEmail, 'codigoHash': codeHash},
       );
 
       if (result.isEmpty) {
@@ -129,10 +126,7 @@ class UsuarioRepository {
           SET senha_hash = @senhaHash, atualizado_em = NOW()
           WHERE id = @usuarioId
         '''),
-        parameters: {
-          'senhaHash': passwordHash,
-          'usuarioId': row['usuario_id'],
-        },
+        parameters: {'senhaHash': passwordHash, 'usuarioId': row['usuario_id']},
       );
 
       await tx.execute(
@@ -151,8 +145,7 @@ class UsuarioRepository {
     return (100000 + random.nextInt(900000)).toString();
   }
 
-  String _hashCode(String code) =>
-      sha256.convert(utf8.encode(code)).toString();
+  String _hashCode(String code) => sha256.convert(utf8.encode(code)).toString();
 }
 
 class PasswordRecoveryData {

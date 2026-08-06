@@ -39,9 +39,9 @@ class _MatchHubScreenState extends State<MatchHubScreen>
           color: Colors.white,
           child: TabBar(
             controller: _tabs,
-            labelColor: AetherColors.navy,
+            labelColor: AceColors.navy,
             unselectedLabelColor: Colors.black45,
-            indicatorColor: AetherColors.navy,
+            indicatorColor: AceColors.navy,
             tabs: const [
               Tab(text: 'Ao vivo'),
               Tab(text: 'Calendário'),
@@ -124,7 +124,7 @@ class _LiveMatchesScreenState extends State<LiveMatchesScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           SurfaceCard(
-            color: AetherColors.navy,
+            color: AceColors.navy,
             child: Row(
               children: [
                 const _LivePulse(),
@@ -658,7 +658,7 @@ class _Scoreboard extends StatelessWidget {
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [AetherColors.navyDark, AetherColors.navy],
+          colors: [AceColors.navyDark, AceColors.navy],
         ),
         borderRadius: BorderRadius.circular(24),
       ),
@@ -716,7 +716,7 @@ class _Scoreboard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 34,
                     fontWeight: FontWeight.w900,
-                    color: AetherColors.navyDark,
+                    color: AceColors.navyDark,
                   ),
                 ),
               ),
@@ -837,10 +837,10 @@ class _EventTile extends StatelessWidget {
       _ => Icons.flag_outlined,
     };
     final color = switch (type) {
-      'PONTUACAO' => AetherColors.success,
+      'PONTUACAO' => AceColors.success,
       'CARTAO_AMARELO' => Colors.amber.shade700,
-      'CARTAO_VERMELHO' => AetherColors.danger,
-      _ => AetherColors.orange,
+      'CARTAO_VERMELHO' => AceColors.danger,
+      _ => AceColors.orange,
     };
     return SurfaceCard(
       child: Row(
@@ -875,7 +875,7 @@ class _EventTile extends StatelessWidget {
               '${event['minuto']}′',
               style: const TextStyle(
                 fontWeight: FontWeight.w900,
-                color: AetherColors.navy,
+                color: AceColors.navy,
               ),
             ),
         ],
@@ -1275,10 +1275,10 @@ class _AssignRefereeScreenState extends State<AssignRefereeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SurfaceCard(
-              color: AetherColors.beigeStrong,
+              color: AceColors.beigeStrong,
               child: Text(
                 'A API atual ainda não possui uma rota de listagem de árbitros. O ID do árbitro de demonstração já está preenchido.',
-                style: TextStyle(color: AetherColors.navyDark),
+                style: TextStyle(color: AceColors.navyDark),
               ),
             ),
             const SizedBox(height: 16),

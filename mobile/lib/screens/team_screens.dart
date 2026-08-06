@@ -173,12 +173,12 @@ class _TeamListScreenState extends State<TeamListScreen> {
                         width: 54,
                         height: 54,
                         decoration: BoxDecoration(
-                          color: AetherColors.beigeStrong,
+                          color: AceColors.beigeStrong,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Icon(
                           Icons.shield_outlined,
-                          color: AetherColors.navy,
+                          color: AceColors.navy,
                           size: 30,
                         ),
                       ),
@@ -203,7 +203,7 @@ class _TeamListScreenState extends State<TeamListScreen> {
                               '${intOf(team, ['atletas'])} atletas • ${intOf(team, ['titulares'])} titulares',
                               style: const TextStyle(
                                 fontSize: 12,
-                                color: AetherColors.navy,
+                                color: AceColors.navy,
                               ),
                             ),
                           ],
@@ -652,7 +652,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                 children: [
                   SurfaceCard(
-                    color: AetherColors.navy,
+                    color: AceColors.navy,
                     child: Row(
                       children: [
                         Container(
@@ -665,7 +665,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
                           child: const Icon(
                             Icons.shield_outlined,
                             size: 42,
-                            color: AetherColors.navy,
+                            color: AceColors.navy,
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -750,14 +750,14 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
                           child: Row(
                             children: [
                               CircleAvatar(
-                                backgroundColor: AetherColors.beigeStrong,
+                                backgroundColor: AceColors.beigeStrong,
                                 child: Text(
                                   textOf(athlete, [
                                     'numero_camisa',
                                   ], fallback: '?'),
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w900,
-                                    color: AetherColors.navy,
+                                    color: AceColors.navy,
                                   ),
                                 ),
                               ),
@@ -781,7 +781,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
                                           const Icon(
                                             Icons.star,
                                             size: 18,
-                                            color: AetherColors.orange,
+                                            color: AceColors.orange,
                                           ),
                                         ],
                                       ],

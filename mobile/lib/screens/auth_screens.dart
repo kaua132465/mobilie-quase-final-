@@ -15,7 +15,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _email = TextEditingController(text: 'escola@aether.local');
+  final _email = TextEditingController(text: 'escola@ace.local');
   final _password = TextEditingController(text: 'Admin@123');
   bool _obscure = true;
 
@@ -65,21 +65,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(32),
                         boxShadow: [
                           BoxShadow(
-                            color: AetherColors.navy.withValues(alpha: .12),
+                            color: AceColors.navy.withValues(alpha: .12),
                             blurRadius: 28,
                             offset: const Offset(0, 12),
                           ),
                         ],
                       ),
-                      child: const AetherLogo(),
+                      child: const AceLogo(),
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'Bem-vindo ao Aether',
+                      'Bem-vindo ao ACE',
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(
                             fontWeight: FontWeight.w900,
-                            color: AetherColors.navyDark,
+                            color: AceColors.navyDark,
                           ),
                     ),
                     const SizedBox(height: 8),
@@ -154,12 +154,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ActionChip(
                           label: const Text('Escola'),
                           avatar: const Icon(Icons.school_outlined, size: 18),
-                          onPressed: () => _demo('escola@aether.local'),
+                          onPressed: () => _demo('escola@ace.local'),
                         ),
                         ActionChip(
                           label: const Text('Atleta'),
                           avatar: const Icon(Icons.sports_outlined, size: 18),
-                          onPressed: () => _demo('atleta@aether.local'),
+                          onPressed: () => _demo('atleta@ace.local'),
                         ),
                         ActionChip(
                           label: const Text('Árbitro'),
@@ -167,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Icons.sports_score_outlined,
                             size: 18,
                           ),
-                          onPressed: () => _demo('arbitro@aether.local'),
+                          onPressed: () => _demo('arbitro@ace.local'),
                         ),
                         ActionChip(
                           label: const Text('Admin'),
@@ -175,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Icons.admin_panel_settings_outlined,
                             size: 18,
                           ),
-                          onPressed: () => _demo('admin@aether.local'),
+                          onPressed: () => _demo('admin@ace.local'),
                         ),
                       ],
                     ),
@@ -242,7 +242,7 @@ class _RecoveryRequestScreenState extends State<RecoveryRequestScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 18),
-            const AetherLogo(height: 74),
+            const AceLogo(height: 74),
             const SizedBox(height: 24),
             const SectionHeader(
               title: 'Redefina sua senha',
@@ -357,7 +357,7 @@ class _RecoveryConfirmScreenState extends State<RecoveryConfirmScreen> {
             if (widget.developmentCode != null) ...[
               const SizedBox(height: 12),
               SurfaceCard(
-                color: AetherColors.beigeStrong,
+                color: AceColors.beigeStrong,
                 child: Text(
                   'Ambiente de desenvolvimento: código ${widget.developmentCode}',
                   style: const TextStyle(fontWeight: FontWeight.w700),
@@ -443,7 +443,7 @@ class _ApiSettingsScreenState extends State<ApiSettingsScreen> {
       if (mounted) {
         showSuccess(
           context,
-          'API conectada: ${textOf(response, ['servico'], fallback: 'Aether')}',
+          'API conectada: ${textOf(response, ['servico'], fallback: 'ACE')}',
         );
       }
     } catch (error) {
@@ -475,7 +475,7 @@ class _ApiSettingsScreenState extends State<ApiSettingsScreen> {
             ),
             const SizedBox(height: 12),
             SurfaceCard(
-              color: AetherColors.beigeStrong,
+              color: AceColors.beigeStrong,
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

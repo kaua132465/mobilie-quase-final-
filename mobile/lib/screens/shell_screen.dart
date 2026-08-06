@@ -33,10 +33,25 @@ class _MainShellState extends State<MainShell> {
   @override
   Widget build(BuildContext context) {
     final session = AppScope.of(context);
-    const titles = ['Início', 'Jogos', 'Times', 'Rankings', 'Mais'];
     return Scaffold(
       appBar: AppBar(
-        title: Text(titles[_index]),
+        title: Tooltip(
+          message: 'Voltar ao início',
+          child: InkWell(
+            onTap: () => _select(0),
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Image.asset(
+                'assets/images/ace_wordmark_orange.png',
+                height: 50,
+                width: 126,
+                fit: BoxFit.contain,
+                errorBuilder: (_, _, _) => const Text('ACE!'),
+              ),
+            ),
+          ),
+        ),
         actions: [
           if (_index == 0)
             Padding(

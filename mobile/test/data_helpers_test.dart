@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('converte mapas e valores da API', () {
-    final data = asMap({'nome': 'Aether', 'pontos': '12', 'ativo': true});
-    expect(textOf(data, ['nome']), 'Aether');
+    final data = asMap({'nome': 'ACE', 'pontos': '12', 'ativo': true});
+    expect(textOf(data, ['nome']), 'ACE');
     expect(intOf(data, ['pontos']), 12);
     expect(boolOf(data, ['ativo']), isTrue);
   });

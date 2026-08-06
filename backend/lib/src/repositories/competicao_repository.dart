@@ -22,7 +22,10 @@ class CompeticaoRepository {
       throw const ApiException(400, 'Informe o nome da competição.');
     }
     if (start != null && end != null && end.isBefore(start)) {
-      throw const ApiException(400, 'A data final não pode anteceder a inicial.');
+      throw const ApiException(
+        400,
+        'A data final não pode anteceder a inicial.',
+      );
     }
 
     return _database.pool.runTx((tx) async {
@@ -42,7 +45,10 @@ class CompeticaoRepository {
         parameters: {'nome': name, 'inicio': start, 'fim': end},
       );
       if (duplicate.isNotEmpty) {
-        throw const ApiException(409, 'Já existe uma competição semelhante no período.');
+        throw const ApiException(
+          409,
+          'Já existe uma competição semelhante no período.',
+        );
       }
 
       final result = await tx.execute(
@@ -68,11 +74,16 @@ class CompeticaoRepository {
           'descricao': data['descricao'],
           'tipo': data['tipo']?.toString().trim().toUpperCase() ?? 'COMPETICAO',
           'abrangencia': data['abrangencia'],
-          'formato': data['formato']?.toString().trim().toUpperCase() ?? 'PONTOS_CORRIDOS',
+          'formato':
+              data['formato']?.toString().trim().toUpperCase() ??
+              'PONTOS_CORRIDOS',
           'limiteTimes': int.tryParse(data['limiteTimes']?.toString() ?? ''),
           'inicio': start,
           'fim': end,
-          'limiteInscricao': _dateTime(data['dataLimiteInscricao'], field: 'dataLimiteInscricao'),
+          'limiteInscricao': _dateTime(
+            data['dataLimiteInscricao'],
+            field: 'dataLimiteInscricao',
+          ),
         },
       );
       final competition = result.single.toColumnMap();
@@ -106,7 +117,14 @@ class CompeticaoRepository {
           },
         );
       }
-      await _audit(tx, actorUserId, 'CRIAR_COMPETICAO', 'COMPETICAO', competitionId, competition);
+      await _audit(
+        tx,
+        actorUserId,
+        'CRIAR_COMPETICAO',
+        'COMPETICAO',
+        competitionId,
+        competition,
+      );
       return competition;
     });
   }
@@ -151,7 +169,9 @@ class CompeticaoRepository {
       '''),
       parameters: {
         'busca': search?.trim().isEmpty == true ? null : search,
-        'status': status?.trim().isEmpty == true ? null : status?.trim().toUpperCase(),
+        'status': status?.trim().isEmpty == true
+            ? null
+            : status?.trim().toUpperCase(),
         'modalidadeId': modalityId,
         'de': from,
         'ate': to,
@@ -236,12 +256,17 @@ class CompeticaoRepository {
     final start = _date(data['dataInicio'], field: 'dataInicio');
     final end = _date(data['dataFim'], field: 'dataFim');
     if (start != null && end != null && end.isBefore(start)) {
-      throw const ApiException(400, 'A data final não pode anteceder a inicial.');
+      throw const ApiException(
+        400,
+        'A data final não pode anteceder a inicial.',
+      );
     }
 
     return _database.pool.runTx((tx) async {
       final currentResult = await tx.execute(
-        Sql.named('SELECT * FROM competicao WHERE id = @id AND ativo = TRUE FOR UPDATE'),
+        Sql.named(
+          'SELECT * FROM competicao WHERE id = @id AND ativo = TRUE FOR UPDATE',
+        ),
         parameters: {'id': competitionId},
       );
       if (currentResult.isEmpty) {
@@ -249,7 +274,10 @@ class CompeticaoRepository {
       }
       final current = currentResult.single.toColumnMap();
       if (current['status'].toString() == 'ENCERRADA') {
-        throw const ApiException(409, 'Uma competição encerrada não pode ser editada.');
+        throw const ApiException(
+          409,
+          'Uma competição encerrada não pode ser editada.',
+        );
       }
 
       final closedMatches = await tx.execute(
@@ -304,7 +332,10 @@ class CompeticaoRepository {
           'limiteTimes': int.tryParse(data['limiteTimes']?.toString() ?? ''),
           'inicio': start,
           'fim': end,
-          'limiteInscricao': _dateTime(data['dataLimiteInscricao'], field: 'dataLimiteInscricao'),
+          'limiteInscricao': _dateTime(
+            data['dataLimiteInscricao'],
+            field: 'dataLimiteInscricao',
+          ),
         },
       );
       await _audit(
@@ -338,7 +369,10 @@ class CompeticaoRepository {
           WHERE id = @id AND ativo = TRUE
           RETURNING id, nome, status, justificativa_cancelamento, excluida_em
         '''),
-        parameters: {'id': competitionId, 'justificativa': justification.trim()},
+        parameters: {
+          'id': competitionId,
+          'justificativa': justification.trim(),
+        },
       );
       if (result.isEmpty) {
         throw const ApiException(404, 'Competição não encontrada.');
@@ -386,7 +420,10 @@ class CompeticaoRepository {
       throw const ApiException(400, 'Informe ano, nome, dataInicio e dataFim.');
     }
     if (end.isBefore(start)) {
-      throw const ApiException(400, 'A data final não pode anteceder a inicial.');
+      throw const ApiException(
+        400,
+        'A data final não pode anteceder a inicial.',
+      );
     }
 
     return _database.pool.runTx((tx) async {
@@ -402,15 +439,21 @@ class CompeticaoRepository {
       Map<String, dynamic> snapshot = {};
       if (copy) {
         final modalities = await tx.execute(
-          Sql.named('SELECT modalidade_id, jogadores_min, jogadores_max, limite_times, regras FROM competicao_modalidade WHERE competicao_id = @id AND ativa = TRUE'),
+          Sql.named(
+            'SELECT modalidade_id, jogadores_min, jogadores_max, limite_times, regras FROM competicao_modalidade WHERE competicao_id = @id AND ativa = TRUE',
+          ),
           parameters: {'id': competitionId},
         );
         final categories = await tx.execute(
-          Sql.named('SELECT categoria_id, data_referencia, serie_min, serie_max, criterios FROM competicao_categoria WHERE competicao_id = @id AND ativa = TRUE'),
+          Sql.named(
+            'SELECT categoria_id, data_referencia, serie_min, serie_max, criterios FROM competicao_categoria WHERE competicao_id = @id AND ativa = TRUE',
+          ),
           parameters: {'id': competitionId},
         );
         final phases = await tx.execute(
-          Sql.named('SELECT nome, ordem, tipo, quantidade_grupos, classificados, configuracao FROM fase_competicao WHERE competicao_id = @id AND ativa = TRUE ORDER BY ordem'),
+          Sql.named(
+            'SELECT nome, ordem, tipo, quantidade_grupos, classificados, configuracao FROM fase_competicao WHERE competicao_id = @id AND ativa = TRUE ORDER BY ordem',
+          ),
           parameters: {'id': competitionId},
         );
         snapshot = {
@@ -478,7 +521,10 @@ class CompeticaoRepository {
       final min = int.tryParse(data['jogadoresMin']?.toString() ?? '');
       final max = int.tryParse(data['jogadoresMax']?.toString() ?? '');
       if (min != null && max != null && max < min) {
-        throw const ApiException(400, 'jogadoresMax deve ser maior ou igual a jogadoresMin.');
+        throw const ApiException(
+          400,
+          'jogadoresMax deve ser maior ou igual a jogadoresMin.',
+        );
       }
       final result = await tx.execute(
         Sql.named('''
@@ -508,10 +554,19 @@ class CompeticaoRepository {
         },
       );
       await tx.execute(
-        Sql.named('UPDATE competicao SET modalidade_id = COALESCE(modalidade_id, @modalidadeId), atualizado_em = NOW() WHERE id = @id'),
+        Sql.named(
+          'UPDATE competicao SET modalidade_id = COALESCE(modalidade_id, @modalidadeId), atualizado_em = NOW() WHERE id = @id',
+        ),
         parameters: {'id': competitionId, 'modalidadeId': modalityId},
       );
-      await _audit(tx, actorUserId, 'CONFIGURAR_MODALIDADE', 'COMPETICAO', competitionId, result.single.toColumnMap());
+      await _audit(
+        tx,
+        actorUserId,
+        'CONFIGURAR_MODALIDADE',
+        'COMPETICAO',
+        competitionId,
+        result.single.toColumnMap(),
+      );
       return result.single.toColumnMap();
     });
   }
@@ -524,11 +579,16 @@ class CompeticaoRepository {
     await _database.pool.runTx((tx) async {
       await _ensureConfigurable(tx, competitionId);
       final matches = await tx.execute(
-        Sql.named('SELECT 1 FROM partida WHERE competicao_id = @id AND status IN (\'EM_ANDAMENTO\', \'ENCERRADA\') LIMIT 1'),
+        Sql.named(
+          'SELECT 1 FROM partida WHERE competicao_id = @id AND status IN (\'EM_ANDAMENTO\', \'ENCERRADA\') LIMIT 1',
+        ),
         parameters: {'id': competitionId},
       );
       if (matches.isNotEmpty) {
-        throw const ApiException(409, 'A modalidade não pode ser removida após partidas iniciadas.');
+        throw const ApiException(
+          409,
+          'A modalidade não pode ser removida após partidas iniciadas.',
+        );
       }
       final result = await tx.execute(
         Sql.named('''
@@ -542,9 +602,19 @@ class CompeticaoRepository {
         parameters: {'competicaoId': competitionId, 'modalidadeId': modalityId},
       );
       if (result.isEmpty) {
-        throw const ApiException(404, 'Configuração de modalidade não encontrada.');
+        throw const ApiException(
+          404,
+          'Configuração de modalidade não encontrada.',
+        );
       }
-      await _audit(tx, actorUserId, 'REMOVER_MODALIDADE', 'COMPETICAO', competitionId, {'modalidadeId': modalityId});
+      await _audit(
+        tx,
+        actorUserId,
+        'REMOVER_MODALIDADE',
+        'COMPETICAO',
+        competitionId,
+        {'modalidadeId': modalityId},
+      );
     });
   }
 
@@ -566,7 +636,10 @@ class CompeticaoRepository {
       final min = int.tryParse(data['serieMin']?.toString() ?? '');
       final max = int.tryParse(data['serieMax']?.toString() ?? '');
       if (min != null && max != null && max < min) {
-        throw const ApiException(400, 'serieMax deve ser maior ou igual a serieMin.');
+        throw const ApiException(
+          400,
+          'serieMax deve ser maior ou igual a serieMin.',
+        );
       }
       final result = await tx.execute(
         Sql.named('''
@@ -596,10 +669,19 @@ class CompeticaoRepository {
         },
       );
       await tx.execute(
-        Sql.named('UPDATE competicao SET categoria_id = COALESCE(categoria_id, @categoriaId), atualizado_em = NOW() WHERE id = @id'),
+        Sql.named(
+          'UPDATE competicao SET categoria_id = COALESCE(categoria_id, @categoriaId), atualizado_em = NOW() WHERE id = @id',
+        ),
         parameters: {'id': competitionId, 'categoriaId': categoryId},
       );
-      await _audit(tx, actorUserId, 'CONFIGURAR_CATEGORIA', 'COMPETICAO', competitionId, result.single.toColumnMap());
+      await _audit(
+        tx,
+        actorUserId,
+        'CONFIGURAR_CATEGORIA',
+        'COMPETICAO',
+        competitionId,
+        result.single.toColumnMap(),
+      );
       return result.single.toColumnMap();
     });
   }
@@ -623,7 +705,10 @@ class CompeticaoRepository {
         parameters: {'competicaoId': competitionId, 'categoriaId': categoryId},
       );
       if (enrolled.isNotEmpty) {
-        throw const ApiException(409, 'Existem times inscritos nessa categoria.');
+        throw const ApiException(
+          409,
+          'Existem times inscritos nessa categoria.',
+        );
       }
       final result = await tx.execute(
         Sql.named('''
@@ -637,9 +722,19 @@ class CompeticaoRepository {
         parameters: {'competicaoId': competitionId, 'categoriaId': categoryId},
       );
       if (result.isEmpty) {
-        throw const ApiException(404, 'Configuração de categoria não encontrada.');
+        throw const ApiException(
+          404,
+          'Configuração de categoria não encontrada.',
+        );
       }
-      await _audit(tx, actorUserId, 'REMOVER_CATEGORIA', 'COMPETICAO', competitionId, {'categoriaId': categoryId});
+      await _audit(
+        tx,
+        actorUserId,
+        'REMOVER_CATEGORIA',
+        'COMPETICAO',
+        competitionId,
+        {'categoriaId': categoryId},
+      );
     });
   }
 
@@ -655,19 +750,28 @@ class CompeticaoRepository {
     return _database.pool.runTx((tx) async {
       await _ensureConfigurable(tx, competitionId);
       final started = await tx.execute(
-        Sql.named('SELECT 1 FROM partida WHERE competicao_id = @id AND status IN (\'EM_ANDAMENTO\', \'ENCERRADA\') LIMIT 1'),
+        Sql.named(
+          'SELECT 1 FROM partida WHERE competicao_id = @id AND status IN (\'EM_ANDAMENTO\', \'ENCERRADA\') LIMIT 1',
+        ),
         parameters: {'id': competitionId},
       );
       if (started.isNotEmpty) {
-        throw const ApiException(409, 'As fases não podem mudar após partidas iniciadas.');
+        throw const ApiException(
+          409,
+          'As fases não podem mudar após partidas iniciadas.',
+        );
       }
 
       await tx.execute(
-        Sql.named('DELETE FROM partida WHERE competicao_id = @id AND status IN (\'PLANEJADA\', \'AGENDADA\')'),
+        Sql.named(
+          'DELETE FROM partida WHERE competicao_id = @id AND status IN (\'PLANEJADA\', \'AGENDADA\')',
+        ),
         parameters: {'id': competitionId},
       );
       await tx.execute(
-        Sql.named('DELETE FROM chaveamento_item WHERE chaveamento_id IN (SELECT id FROM chaveamento WHERE competicao_id = @id)'),
+        Sql.named(
+          'DELETE FROM chaveamento_item WHERE chaveamento_id IN (SELECT id FROM chaveamento WHERE competicao_id = @id)',
+        ),
         parameters: {'id': competitionId},
       );
       await tx.execute(
@@ -675,11 +779,15 @@ class CompeticaoRepository {
         parameters: {'id': competitionId},
       );
       await tx.execute(
-        Sql.named('DELETE FROM regra_classificacao WHERE fase_id IN (SELECT id FROM fase_competicao WHERE competicao_id = @id)'),
+        Sql.named(
+          'DELETE FROM regra_classificacao WHERE fase_id IN (SELECT id FROM fase_competicao WHERE competicao_id = @id)',
+        ),
         parameters: {'id': competitionId},
       );
       await tx.execute(
-        Sql.named('DELETE FROM grupo_competicao WHERE fase_id IN (SELECT id FROM fase_competicao WHERE competicao_id = @id)'),
+        Sql.named(
+          'DELETE FROM grupo_competicao WHERE fase_id IN (SELECT id FROM fase_competicao WHERE competicao_id = @id)',
+        ),
         parameters: {'id': competitionId},
       );
       await tx.execute(
@@ -699,7 +807,8 @@ class CompeticaoRepository {
         if (name.isEmpty || type.isEmpty) {
           throw const ApiException(400, 'Cada fase precisa de nome e tipo.');
         }
-        final order = int.tryParse(phase['ordem']?.toString() ?? '') ?? index + 1;
+        final order =
+            int.tryParse(phase['ordem']?.toString() ?? '') ?? index + 1;
         final result = await tx.execute(
           Sql.named('''
             INSERT INTO fase_competicao
@@ -717,7 +826,9 @@ class CompeticaoRepository {
             'ordem': order,
             'tipo': type,
             'grupos': int.tryParse(phase['quantidadeGrupos']?.toString() ?? ''),
-            'classificados': int.tryParse(phase['classificados']?.toString() ?? ''),
+            'classificados': int.tryParse(
+              phase['classificados']?.toString() ?? '',
+            ),
             'configuracao': _json(phase['configuracao'] ?? <String, dynamic>{}),
           },
         );
@@ -730,8 +841,14 @@ class CompeticaoRepository {
             final groupName = groups[groupIndex].toString().trim();
             if (groupName.isEmpty) continue;
             await tx.execute(
-              Sql.named('INSERT INTO grupo_competicao (fase_id, nome, ordem) VALUES (@faseId, @nome, @ordem)'),
-              parameters: {'faseId': phaseId, 'nome': groupName, 'ordem': groupIndex + 1},
+              Sql.named(
+                'INSERT INTO grupo_competicao (fase_id, nome, ordem) VALUES (@faseId, @nome, @ordem)',
+              ),
+              parameters: {
+                'faseId': phaseId,
+                'nome': groupName,
+                'ordem': groupIndex + 1,
+              },
             );
           }
         }
@@ -752,15 +869,25 @@ class CompeticaoRepository {
                 'faseId': phaseId,
                 'ordem': ruleIndex + 1,
                 'criterio': rule['criterio'].toString().trim().toUpperCase(),
-                'direcao': rule['direcao']?.toString().trim().toUpperCase() ?? 'DESC',
-                'configuracao': _json(rule['configuracao'] ?? <String, dynamic>{}),
+                'direcao':
+                    rule['direcao']?.toString().trim().toUpperCase() ?? 'DESC',
+                'configuracao': _json(
+                  rule['configuracao'] ?? <String, dynamic>{},
+                ),
               },
             );
           }
         }
         created.add(item);
       }
-      await _audit(tx, actorUserId, 'ORGANIZAR_FASES', 'COMPETICAO', competitionId, created);
+      await _audit(
+        tx,
+        actorUserId,
+        'ORGANIZAR_FASES',
+        'COMPETICAO',
+        competitionId,
+        created,
+      );
       return created;
     });
   }
@@ -771,11 +898,15 @@ class CompeticaoRepository {
     String actorUserId,
   ) async {
     final method = data['metodo']?.toString().trim().toUpperCase() ?? 'SORTEIO';
-    final seed = int.tryParse(data['semente']?.toString() ?? '') ?? DateTime.now().millisecondsSinceEpoch;
+    final seed =
+        int.tryParse(data['semente']?.toString() ?? '') ??
+        DateTime.now().millisecondsSinceEpoch;
 
     return _database.pool.runTx((tx) async {
       final competition = await tx.execute(
-        Sql.named('SELECT id, status FROM competicao WHERE id = @id AND ativo = TRUE FOR UPDATE'),
+        Sql.named(
+          'SELECT id, status FROM competicao WHERE id = @id AND ativo = TRUE FOR UPDATE',
+        ),
         parameters: {'id': competitionId},
       );
       if (competition.isEmpty) {
@@ -792,7 +923,10 @@ class CompeticaoRepository {
         parameters: {'id': competitionId},
       );
       if (teamsResult.length < 2) {
-        throw const ApiException(409, 'São necessários ao menos dois times inscritos.');
+        throw const ApiException(
+          409,
+          'São necessários ao menos dois times inscritos.',
+        );
       }
       final teams = teamsResult.map((row) => row.toColumnMap()).toList();
       if (method == 'SORTEIO') {
@@ -804,20 +938,29 @@ class CompeticaoRepository {
       String? phaseId = data['faseId']?.toString();
       if (phaseId == null || phaseId.isEmpty) {
         final phase = await tx.execute(
-          Sql.named('SELECT id FROM fase_competicao WHERE competicao_id = @id AND ativa = TRUE ORDER BY ordem LIMIT 1'),
+          Sql.named(
+            'SELECT id FROM fase_competicao WHERE competicao_id = @id AND ativa = TRUE ORDER BY ordem LIMIT 1',
+          ),
           parameters: {'id': competitionId},
         );
         if (phase.isEmpty) {
-          throw const ApiException(409, 'Configure as fases antes do chaveamento.');
+          throw const ApiException(
+            409,
+            'Configure as fases antes do chaveamento.',
+          );
         }
         phaseId = phase.single.toColumnMap()['id'].toString();
       }
       final groups = await tx.execute(
-        Sql.named('SELECT id, nome FROM grupo_competicao WHERE fase_id = @faseId ORDER BY ordem, nome'),
+        Sql.named(
+          'SELECT id, nome FROM grupo_competicao WHERE fase_id = @faseId ORDER BY ordem, nome',
+        ),
         parameters: {'faseId': phaseId},
       );
       final versionResult = await tx.execute(
-        Sql.named('SELECT COALESCE(MAX(versao), 0)::int + 1 AS versao FROM chaveamento WHERE competicao_id = @id'),
+        Sql.named(
+          'SELECT COALESCE(MAX(versao), 0)::int + 1 AS versao FROM chaveamento WHERE competicao_id = @id',
+        ),
         parameters: {'id': competitionId},
       );
       final version = versionResult.single.toColumnMap()['versao'] as int;
@@ -863,12 +1006,24 @@ class CompeticaoRepository {
             'grupoId': groupId,
             'timeId': teams[index]['id'],
             'posicao': index + 1,
-            'chave': groups.isEmpty ? 'CHAVE_${index + 1}' : groups[index % groups.length].toColumnMap()['nome'],
+            'chave': groups.isEmpty
+                ? 'CHAVE_${index + 1}'
+                : groups[index % groups.length].toColumnMap()['nome'],
           },
         );
-        items.add({...item.single.toColumnMap(), 'time_nome': teams[index]['nome']});
+        items.add({
+          ...item.single.toColumnMap(),
+          'time_nome': teams[index]['nome'],
+        });
       }
-      await _audit(tx, actorUserId, 'GERAR_CHAVEAMENTO', 'CHAVEAMENTO', bracketId, {'semente': seed, 'metodo': method, 'itens': items});
+      await _audit(
+        tx,
+        actorUserId,
+        'GERAR_CHAVEAMENTO',
+        'CHAVEAMENTO',
+        bracketId,
+        {'semente': seed, 'metodo': method, 'itens': items},
+      );
       return {...bracketMap, 'itens': items};
     });
   }
@@ -896,7 +1051,10 @@ class CompeticaoRepository {
         parameters: {'id': competitionId},
       );
       if (latest.isEmpty) {
-        throw const ApiException(409, 'Gere e confirme o chaveamento antes da tabela.');
+        throw const ApiException(
+          409,
+          'Gere e confirme o chaveamento antes da tabela.',
+        );
       }
       final bracket = latest.single.toColumnMap();
       final bracketId = bracket['id'].toString();
@@ -911,27 +1069,42 @@ class CompeticaoRepository {
         parameters: {'id': bracketId},
       );
       if (teamsResult.length < 2) {
-        throw const ApiException(409, 'O chaveamento não possui times suficientes.');
+        throw const ApiException(
+          409,
+          'O chaveamento não possui times suficientes.',
+        );
       }
 
       final existing = await tx.execute(
-        Sql.named('SELECT COUNT(*)::int AS total FROM partida WHERE competicao_id = @id AND status <> \'CANCELADA\''),
+        Sql.named(
+          'SELECT COUNT(*)::int AS total FROM partida WHERE competicao_id = @id AND status <> \'CANCELADA\'',
+        ),
         parameters: {'id': competitionId},
       );
       final totalExisting = existing.single.toColumnMap()['total'] as int;
       if (totalExisting > 0 && !replace) {
-        throw const ApiException(409, 'Já existe uma tabela. Use substituir=true para recriar partidas futuras.');
+        throw const ApiException(
+          409,
+          'Já existe uma tabela. Use substituir=true para recriar partidas futuras.',
+        );
       }
       if (replace) {
         final started = await tx.execute(
-          Sql.named('SELECT 1 FROM partida WHERE competicao_id = @id AND status IN (\'EM_ANDAMENTO\', \'ENCERRADA\') LIMIT 1'),
+          Sql.named(
+            'SELECT 1 FROM partida WHERE competicao_id = @id AND status IN (\'EM_ANDAMENTO\', \'ENCERRADA\') LIMIT 1',
+          ),
           parameters: {'id': competitionId},
         );
         if (started.isNotEmpty) {
-          throw const ApiException(409, 'Não é possível substituir uma tabela com partidas iniciadas.');
+          throw const ApiException(
+            409,
+            'Não é possível substituir uma tabela com partidas iniciadas.',
+          );
         }
         await tx.execute(
-          Sql.named('DELETE FROM partida WHERE competicao_id = @id AND status IN (\'PLANEJADA\', \'AGENDADA\', \'CANCELADA\')'),
+          Sql.named(
+            'DELETE FROM partida WHERE competicao_id = @id AND status IN (\'PLANEJADA\', \'AGENDADA\', \'CANCELADA\')',
+          ),
           parameters: {'id': competitionId},
         );
       }
@@ -991,8 +1164,20 @@ class CompeticaoRepository {
           generated.add(result.single.toColumnMap());
         }
       }
-      await _audit(tx, actorUserId, 'GERAR_TABELA_PARTIDAS', 'COMPETICAO', competitionId, {'modo': mode, 'total': generated.length});
-      return {'competicaoId': competitionId, 'modo': mode, 'total': generated.length, 'partidas': generated};
+      await _audit(
+        tx,
+        actorUserId,
+        'GERAR_TABELA_PARTIDAS',
+        'COMPETICAO',
+        competitionId,
+        {'modo': mode, 'total': generated.length},
+      );
+      return {
+        'competicaoId': competitionId,
+        'modo': mode,
+        'total': generated.length,
+        'partidas': generated,
+      };
     });
   }
 
@@ -1005,14 +1190,16 @@ class CompeticaoRepository {
     if (dateTime == null) {
       throw const ApiException(400, 'Informe dataHora.');
     }
-    return _database.pool.runTx((tx) => _scheduleWithTx(
-          tx,
-          matchId,
-          dateTime,
-          data['localId']?.toString(),
-          data['motivo']?.toString(),
-          actorUserId,
-        ));
+    return _database.pool.runTx(
+      (tx) => _scheduleWithTx(
+        tx,
+        matchId,
+        dateTime,
+        data['localId']?.toString(),
+        data['motivo']?.toString(),
+        actorUserId,
+      ),
+    );
   }
 
   Future<List<Map<String, dynamic>>> scheduleCompetition(
@@ -1027,29 +1214,42 @@ class CompeticaoRepository {
       final scheduled = <Map<String, dynamic>>[];
       for (final raw in entries) {
         if (raw is! Map) {
-          throw const ApiException(400, 'Cada item do calendário deve ser um objeto.');
+          throw const ApiException(
+            400,
+            'Cada item do calendário deve ser um objeto.',
+          );
         }
         final item = Map<String, dynamic>.from(raw);
         final matchId = item['partidaId']?.toString();
         final dateTime = _dateTime(item['dataHora'], field: 'dataHora');
         if (matchId == null || dateTime == null) {
-          throw const ApiException(400, 'Cada item precisa de partidaId e dataHora.');
+          throw const ApiException(
+            400,
+            'Cada item precisa de partidaId e dataHora.',
+          );
         }
         final belongs = await tx.execute(
-          Sql.named('SELECT 1 FROM partida WHERE id = @partidaId AND competicao_id = @competicaoId'),
+          Sql.named(
+            'SELECT 1 FROM partida WHERE id = @partidaId AND competicao_id = @competicaoId',
+          ),
           parameters: {'partidaId': matchId, 'competicaoId': competitionId},
         );
         if (belongs.isEmpty) {
-          throw const ApiException(409, 'Uma partida não pertence à competição informada.');
+          throw const ApiException(
+            409,
+            'Uma partida não pertence à competição informada.',
+          );
         }
-        scheduled.add(await _scheduleWithTx(
-          tx,
-          matchId,
-          dateTime,
-          item['localId']?.toString(),
-          item['motivo']?.toString(),
-          actorUserId,
-        ));
+        scheduled.add(
+          await _scheduleWithTx(
+            tx,
+            matchId,
+            dateTime,
+            item['localId']?.toString(),
+            item['motivo']?.toString(),
+            actorUserId,
+          ),
+        );
       }
       return scheduled;
     });
@@ -1110,7 +1310,10 @@ class CompeticaoRepository {
     final city = data['cidade']?.toString().trim() ?? '';
     final state = data['estado']?.toString().trim().toUpperCase() ?? '';
     if (name.isEmpty || type.isEmpty || city.isEmpty || state.length != 2) {
-      throw const ApiException(400, 'Informe nome, tipo, cidade e estado do local.');
+      throw const ApiException(
+        400,
+        'Informe nome, tipo, cidade e estado do local.',
+      );
     }
 
     return _database.pool.runTx((tx) async {
@@ -1148,12 +1351,21 @@ class CompeticaoRepository {
       if (modalityIds is List) {
         for (final id in modalityIds) {
           await tx.execute(
-            Sql.named('INSERT INTO local_modalidade (local_id, modalidade_id) VALUES (@localId, @modalidadeId) ON CONFLICT DO NOTHING'),
+            Sql.named(
+              'INSERT INTO local_modalidade (local_id, modalidade_id) VALUES (@localId, @modalidadeId) ON CONFLICT DO NOTHING',
+            ),
             parameters: {'localId': locationId, 'modalidadeId': id},
           );
         }
       }
-      await _audit(tx, actorUserId, 'CADASTRAR_LOCAL', 'LOCAL_PARTIDA', locationId, location);
+      await _audit(
+        tx,
+        actorUserId,
+        'CADASTRAR_LOCAL',
+        'LOCAL_PARTIDA',
+        locationId,
+        location,
+      );
       return location;
     });
   }
@@ -1219,10 +1431,16 @@ class CompeticaoRepository {
               )
             )
         '''),
-        parameters: {'localId': locationId, 'modalidadeId': current['modalidade_id']},
+        parameters: {
+          'localId': locationId,
+          'modalidadeId': current['modalidade_id'],
+        },
       );
       if (location.isEmpty) {
-        throw const ApiException(409, 'Local inexistente ou incompatível com a modalidade.');
+        throw const ApiException(
+          409,
+          'Local inexistente ou incompatível com a modalidade.',
+        );
       }
       if (current['data_hora'] != null) {
         final conflict = await tx.execute(
@@ -1235,10 +1453,17 @@ class CompeticaoRepository {
                                 AND CAST(@dataHora AS timestamptz) + INTERVAL '90 minutes'
             LIMIT 1
           '''),
-          parameters: {'localId': locationId, 'partidaId': matchId, 'dataHora': current['data_hora']},
+          parameters: {
+            'localId': locationId,
+            'partidaId': matchId,
+            'dataHora': current['data_hora'],
+          },
         );
         if (conflict.isNotEmpty) {
-          throw const ApiException(409, 'O local já está ocupado nesse horário.');
+          throw const ApiException(
+            409,
+            'O local já está ocupado nesse horário.',
+          );
         }
       }
       final result = await tx.execute(
@@ -1268,7 +1493,14 @@ class CompeticaoRepository {
           'usuarioId': actorUserId,
         },
       );
-      await _audit(tx, actorUserId, 'REGISTRAR_LOCAL_PARTIDA', 'PARTIDA', matchId, {'localId': locationId});
+      await _audit(
+        tx,
+        actorUserId,
+        'REGISTRAR_LOCAL_PARTIDA',
+        'PARTIDA',
+        matchId,
+        {'localId': locationId},
+      );
       return result.single.toColumnMap();
     });
   }
@@ -1293,7 +1525,10 @@ class CompeticaoRepository {
       }
       final competition = competitionResult.single.toColumnMap();
       if (competition['status'] != 'INSCRICOES_ABERTAS') {
-        throw const ApiException(409, 'A competição não está com inscrições abertas.');
+        throw const ApiException(
+          409,
+          'A competição não está com inscrições abertas.',
+        );
       }
       final deadline = competition['data_limite_inscricao'];
       if (deadline is DateTime && DateTime.now().isAfter(deadline)) {
@@ -1308,7 +1543,8 @@ class CompeticaoRepository {
         '''),
         parameters: {'id': teamId},
       );
-      if (teamResult.isEmpty || teamResult.single.toColumnMap()['ativo'] != true) {
+      if (teamResult.isEmpty ||
+          teamResult.single.toColumnMap()['ativo'] != true) {
         throw const ApiException(404, 'Time ativo não encontrado.');
       }
       final team = teamResult.single.toColumnMap();
@@ -1341,7 +1577,10 @@ class CompeticaoRepository {
         },
       );
       if (compatible.isEmpty) {
-        throw const ApiException(409, 'Modalidade ou categoria do time é incompatível com a competição.');
+        throw const ApiException(
+          409,
+          'Modalidade ou categoria do time é incompatível com a competição.',
+        );
       }
 
       final countResult = await tx.execute(
@@ -1355,7 +1594,10 @@ class CompeticaoRepository {
       final total = countResult.single.toColumnMap()['total'] as int;
       final limit = competition['limite_times'] as int?;
       if (limit != null && total >= limit) {
-        throw const ApiException(409, 'O limite de times da competição foi atingido.');
+        throw const ApiException(
+          409,
+          'O limite de times da competição foi atingido.',
+        );
       }
 
       final result = await tx.execute(
@@ -1380,9 +1622,19 @@ class CompeticaoRepository {
         },
       );
       if (result.isEmpty) {
-        throw const ApiException(409, 'O time já está inscrito nessa competição.');
+        throw const ApiException(
+          409,
+          'O time já está inscrito nessa competição.',
+        );
       }
-      await _audit(tx, actorUserId, 'INSCREVER_TIME', 'COMPETICAO', competitionId, {'timeId': teamId});
+      await _audit(
+        tx,
+        actorUserId,
+        'INSCREVER_TIME',
+        'COMPETICAO',
+        competitionId,
+        {'timeId': teamId},
+      );
       return result.single.toColumnMap();
     });
   }
@@ -1411,7 +1663,10 @@ class CompeticaoRepository {
       },
     );
     if (result.isEmpty) {
-      throw const ApiException(409, 'Inscrição ativa não encontrada ou cancelamento não permitido.');
+      throw const ApiException(
+        409,
+        'Inscrição ativa não encontrada ou cancelamento não permitido.',
+      );
     }
   }
 
@@ -1445,9 +1700,19 @@ class CompeticaoRepository {
         parameters: {'id': competitionId, 'usuarioId': actorUserId},
       );
       if (result.isEmpty) {
-        throw const ApiException(404, 'Competição não encontrada ou já encerrada.');
+        throw const ApiException(
+          404,
+          'Competição não encontrada ou já encerrada.',
+        );
       }
-      await _audit(tx, actorUserId, 'ENCERRAR_COMPETICAO', 'COMPETICAO', competitionId, result.single.toColumnMap());
+      await _audit(
+        tx,
+        actorUserId,
+        'ENCERRAR_COMPETICAO',
+        'COMPETICAO',
+        competitionId,
+        result.single.toColumnMap(),
+      );
       return result.single.toColumnMap();
     });
   }
@@ -1499,9 +1764,13 @@ class CompeticaoRepository {
     final day = DateTime(dateTime.year, dateTime.month, dateTime.day);
     final start = match['data_inicio'] as DateTime?;
     final end = match['data_fim'] as DateTime?;
-    if ((start != null && day.isBefore(DateTime(start.year, start.month, start.day))) ||
+    if ((start != null &&
+            day.isBefore(DateTime(start.year, start.month, start.day))) ||
         (end != null && day.isAfter(DateTime(end.year, end.month, end.day)))) {
-      throw const ApiException(409, 'A data está fora do período da competição.');
+      throw const ApiException(
+        409,
+        'A data está fora do período da competição.',
+      );
     }
 
     final teamConflict = await tx.execute(
@@ -1523,13 +1792,19 @@ class CompeticaoRepository {
       },
     );
     if (teamConflict.isNotEmpty) {
-      throw const ApiException(409, 'Um dos times já possui partida em horário conflitante.');
+      throw const ApiException(
+        409,
+        'Um dos times já possui partida em horário conflitante.',
+      );
     }
 
-    final selectedLocation = locationId ?? match['local_partida_id']?.toString();
+    final selectedLocation =
+        locationId ?? match['local_partida_id']?.toString();
     if (selectedLocation != null) {
       final location = await tx.execute(
-        Sql.named('SELECT 1 FROM local_partida WHERE id = @id AND ativo = TRUE'),
+        Sql.named(
+          'SELECT 1 FROM local_partida WHERE id = @id AND ativo = TRUE',
+        ),
         parameters: {'id': selectedLocation},
       );
       if (location.isEmpty) {
@@ -1544,7 +1819,11 @@ class CompeticaoRepository {
                               AND @dataHora + INTERVAL '90 minutes'
           LIMIT 1
         '''),
-        parameters: {'id': matchId, 'localId': selectedLocation, 'dataHora': dateTime},
+        parameters: {
+          'id': matchId,
+          'localId': selectedLocation,
+          'dataHora': dateTime,
+        },
       );
       if (locationConflict.isNotEmpty) {
         throw const ApiException(409, 'O local já está ocupado nesse horário.');
@@ -1562,7 +1841,11 @@ class CompeticaoRepository {
         RETURNING id, competicao_id, time_casa_id, time_visitante_id,
                   data_hora, local_partida_id, rodada, status
       '''),
-      parameters: {'id': matchId, 'dataHora': dateTime, 'localId': selectedLocation},
+      parameters: {
+        'id': matchId,
+        'dataHora': dateTime,
+        'localId': selectedLocation,
+      },
     );
     await tx.execute(
       Sql.named('''
@@ -1584,7 +1867,14 @@ class CompeticaoRepository {
         'usuarioId': actorUserId,
       },
     );
-    await _audit(tx, actorUserId, 'REGISTRAR_CALENDARIO', 'PARTIDA', matchId, result.single.toColumnMap());
+    await _audit(
+      tx,
+      actorUserId,
+      'REGISTRAR_CALENDARIO',
+      'PARTIDA',
+      matchId,
+      result.single.toColumnMap(),
+    );
     return result.single.toColumnMap();
   }
 
@@ -1598,7 +1888,10 @@ class CompeticaoRepository {
       parameters: {'id': competitionId},
     );
     if (result.isEmpty) {
-      throw const ApiException(409, 'A competição não está em fase de configuração.');
+      throw const ApiException(
+        409,
+        'A competição não está em fase de configuração.',
+      );
     }
   }
 

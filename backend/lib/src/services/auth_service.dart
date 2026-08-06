@@ -24,9 +24,9 @@ class AuthService {
     return BCrypt.hashpw(password, BCrypt.gensalt());
   }
 
-
   String generateTemporaryPassword() {
-    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+    const alphabet =
+        'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
     final random = Random.secure();
     final body = List.generate(
       8,
@@ -53,15 +53,12 @@ class AuthService {
       throw StateError('JWT_SECRET não configurado.');
     }
 
-    final jwt = JWT(
-      {
-        'sub': account['usuario_id'].toString(),
-        'alunoId': account['aluno_id']?.toString(),
-        'escolaId': account['escola_id']?.toString(),
-        'perfil': account['perfil'].toString(),
-      },
-      issuer: 'aether-api',
-    );
+    final jwt = JWT({
+      'sub': account['usuario_id'].toString(),
+      'alunoId': account['aluno_id']?.toString(),
+      'escolaId': account['escola_id']?.toString(),
+      'perfil': account['perfil'].toString(),
+    }, issuer: 'aether-api');
 
     final token = jwt.sign(
       SecretKey(secret),

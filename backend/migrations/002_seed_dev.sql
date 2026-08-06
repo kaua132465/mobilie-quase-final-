@@ -30,7 +30,7 @@ ON CONFLICT (nome) DO NOTHING;
 
 INSERT INTO usuario (id, nome, email, senha_hash, perfil, ativo) VALUES
   ('00000000-0000-0000-0000-000000000001', 'Administrador de Desenvolvimento',
-   'admin@aether.local', '$2a$10$cdsKFqwoj86GakZHa.3vKubpXRExvqlWg/WxijUtYgqmXBo.1YanK',
+   'admin@ace.local', '$2a$10$cdsKFqwoj86GakZHa.3vKubpXRExvqlWg/WxijUtYgqmXBo.1YanK',
    'ADMINISTRADOR', TRUE)
 ON CONFLICT (email) DO NOTHING;
 
@@ -42,6 +42,6 @@ ON CONFLICT (cnpj) DO NOTHING;
 COMMIT;
 
 -- Login de desenvolvimento:
--- e-mail: admin@aether.local
+-- e-mail: admin@ace.local
 -- senha: Admin@123
 -- escolaId para cadastrar alunos: 00000000-0000-0000-0000-000000000010

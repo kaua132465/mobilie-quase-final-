@@ -14,7 +14,7 @@ Login:
 
 ```json
 {
-  "email": "escola@aether.local",
+  "email": "escola@ace.local",
   "senha": "Admin@123"
 }
 ```

@@ -112,7 +112,7 @@ class MobileRouter {
   }
 
   Response _health(Request request) =>
-      ok({'status': 'ok', 'servico': 'aether-mobile-api', 'versao': '2.0.0'});
+      ok({'status': 'ok', 'servico': 'ACE Mobile API', 'versao': '2.0.0'});
 
   Future<Response> _login(Request request) async {
     final body = await readJsonObject(request);

@@ -17,11 +17,11 @@ class ApiRouter {
     required CompeticaoRepository competicoes,
     required PartidaRepository partidas,
     required AuthService auth,
-  })  : _alunos = alunos,
-        _documentos = documentos,
-        _competicoes = competicoes,
-        _partidas = partidas,
-        _auth = auth;
+  }) : _alunos = alunos,
+       _documentos = documentos,
+       _competicoes = competicoes,
+       _partidas = partidas,
+       _auth = auth;
 
   final AlunoRepository _alunos;
   final DocumentoRepository _documentos;
@@ -95,7 +95,7 @@ class ApiRouter {
   }
 
   Response _health(Request request) =>
-      ok({'status': 'ok', 'servico': 'aether-api'});
+      ok({'status': 'ok', 'servico': 'ACE API'});
 
   Future<Response> _login(Request request) async {
     final body = await readJsonObject(request);
@@ -495,9 +495,7 @@ class ApiRouter {
     if (teamId == null || teamId.isEmpty) {
       throw const ApiException(400, 'Informe timeId.');
     }
-    return created(
-      await _competicoes.enrollTeam(id, teamId, _userId(request)),
-    );
+    return created(await _competicoes.enrollTeam(id, teamId, _userId(request)));
   }
 
   Future<Response> _cancelEnrollment(
@@ -543,9 +541,7 @@ class ApiRouter {
     if (home == null || away == null) {
       throw const ApiException(400, 'Informe placarCasa e placarVisitante.');
     }
-    return ok(
-      await _partidas.registerResult(id, home, away, _userId(request)),
-    );
+    return ok(await _partidas.registerResult(id, home, away, _userId(request)));
   }
 
   Future<Response> _registerScore(Request request, String id) async {
@@ -615,24 +611,34 @@ class ApiRouter {
   }) {
     final profile = request.context['perfil']?.toString().toUpperCase();
     final ownStudentId = request.context['alunoId']?.toString();
-    final privileged = {'ADMINISTRADOR', 'ESCOLA', 'ORGANIZADOR'}.contains(profile);
-    final ownsRecord = allowStudent && profile == 'ALUNO' && ownStudentId == studentId;
+    final privileged = {
+      'ADMINISTRADOR',
+      'ESCOLA',
+      'ORGANIZADOR',
+    }.contains(profile);
+    final ownsRecord =
+        allowStudent && profile == 'ALUNO' && ownStudentId == studentId;
     if (!privileged && !ownsRecord) {
-      throw const ApiException(403, 'Sem permissão para consultar ou alterar este aluno.');
+      throw const ApiException(
+        403,
+        'Sem permissão para consultar ou alterar este aluno.',
+      );
     }
   }
 
   DateTime? _optionalDate(String? value) {
     if (value == null || value.trim().isEmpty) return null;
     final parsed = DateTime.tryParse(value);
-    if (parsed == null) throw const ApiException(400, 'Data de filtro inválida.');
+    if (parsed == null)
+      throw const ApiException(400, 'Data de filtro inválida.');
     return DateTime(parsed.year, parsed.month, parsed.day);
   }
 
   DateTime? _optionalDateTime(String? value) {
     if (value == null || value.trim().isEmpty) return null;
     final parsed = DateTime.tryParse(value);
-    if (parsed == null) throw const ApiException(400, 'Data e hora de filtro inválida.');
+    if (parsed == null)
+      throw const ApiException(400, 'Data e hora de filtro inválida.');
     return parsed;
   }
 }

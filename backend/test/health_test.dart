@@ -21,9 +21,9 @@ void main() {
       final request = Request(
         'POST',
         Uri.parse('http://localhost/teste'),
-        body: jsonEncode({'nome': 'Aether'}),
+        body: jsonEncode({'nome': 'ACE'}),
       );
-      expect(await readJsonObject(request), {'nome': 'Aether'});
+      expect(await readJsonObject(request), {'nome': 'ACE'});
     });
 
     test('readJsonObject rejeita array JSON', () async {

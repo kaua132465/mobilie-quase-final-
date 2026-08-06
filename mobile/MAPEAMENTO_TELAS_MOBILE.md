@@ -1,4 +1,4 @@
-# Mapeamento das telas Mobile — Aether
+# Mapeamento das telas Mobile — ACE
 
 Este projeto foi construído a partir dos wireframes da pasta do TCC e do arquivo **Divisão por Dispositivo**. Como esse arquivo usa uma numeração antiga em alguns pontos, a relação abaixo considera o nome da funcionalidade e a numeração oficial dos requisitos.
 

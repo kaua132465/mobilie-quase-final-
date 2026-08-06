@@ -4,13 +4,13 @@ BEGIN;
 
 INSERT INTO usuario (id, nome, email, senha_hash, perfil, ativo) VALUES
   ('00000000-0000-0000-0000-000000000002', 'Escola de Desenvolvimento',
-   'escola@aether.local', '$2a$10$cdsKFqwoj86GakZHa.3vKubpXRExvqlWg/WxijUtYgqmXBo.1YanK',
+   'escola@ace.local', '$2a$10$cdsKFqwoj86GakZHa.3vKubpXRExvqlWg/WxijUtYgqmXBo.1YanK',
    'ESCOLA', TRUE),
   ('00000000-0000-0000-0000-000000000003', 'Atleta de Desenvolvimento',
-   'atleta@aether.local', '$2a$10$cdsKFqwoj86GakZHa.3vKubpXRExvqlWg/WxijUtYgqmXBo.1YanK',
+   'atleta@ace.local', '$2a$10$cdsKFqwoj86GakZHa.3vKubpXRExvqlWg/WxijUtYgqmXBo.1YanK',
    'ALUNO', TRUE),
   ('00000000-0000-0000-0000-000000000004', 'Árbitro de Desenvolvimento',
-   'arbitro@aether.local', '$2a$10$cdsKFqwoj86GakZHa.3vKubpXRExvqlWg/WxijUtYgqmXBo.1YanK',
+   'arbitro@ace.local', '$2a$10$cdsKFqwoj86GakZHa.3vKubpXRExvqlWg/WxijUtYgqmXBo.1YanK',
    'ARBITRO', TRUE)
 ON CONFLICT (email) DO NOTHING;
 
@@ -50,7 +50,7 @@ INSERT INTO time_esportivo
 SELECT
   '00000000-0000-0000-0000-000000000040',
   '00000000-0000-0000-0000-000000000010', m.id, c.id,
-  'Aether Futsal', 'Técnico Aether', TRUE
+  'ACE Futsal', 'Técnico ACE', TRUE
 FROM modalidade m, categoria c
 WHERE m.nome = 'Futsal' AND c.nome = 'Sub-18 Masculino'
 ON CONFLICT DO NOTHING;
@@ -79,7 +79,7 @@ INSERT INTO competicao
 SELECT
   '00000000-0000-0000-0000-000000000050', m.id, c.id,
   '00000000-0000-0000-0000-000000000001',
-  'Jogos Escolares Aether 2026', 'Competição de demonstração mobile',
+  'Jogos Escolares ACE 2026', 'Competição de demonstração mobile',
   'JOGOS_ESCOLARES', 'MUNICIPAL', 'PONTOS_CORRIDOS', 'EM_ANDAMENTO',
   CURRENT_DATE, CURRENT_DATE + 10, TRUE
 FROM modalidade m, categoria c

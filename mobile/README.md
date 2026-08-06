@@ -1,4 +1,4 @@
-# Aether Mobile
+# ACE Mobile
 
 Projeto Flutter/Dart das telas Mobile do TCC **Sistema de Gestão Esportiva Escolar**.
 
@@ -35,10 +35,10 @@ http://192.168.0.10:8080/api/mobile
 
 Senha para todos: `Admin@123`
 
-- `admin@aether.local`
-- `escola@aether.local`
-- `atleta@aether.local`
-- `arbitro@aether.local`
+- `admin@ace.local`
+- `escola@ace.local`
+- `atleta@ace.local`
+- `arbitro@ace.local`
 
 ## Plataformas
 

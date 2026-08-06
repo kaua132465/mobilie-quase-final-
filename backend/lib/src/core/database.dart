@@ -10,7 +10,9 @@ class Database {
   factory Database.fromEnvironment() {
     final url = Platform.environment['DATABASE_URL'];
     if (url == null || url.trim().isEmpty) {
-      throw StateError('Defina a variável DATABASE_URL antes de iniciar a API.');
+      throw StateError(
+        'Defina a variável DATABASE_URL antes de iniciar a API.',
+      );
     }
     return Database._(Pool.withUrl(url));
   }

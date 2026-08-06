@@ -331,7 +331,9 @@ class TimeRepository {
         parameters: {'timeId': teamId, 'alunoId': athleteId},
       );
     });
-    await _audit(actorUserId, 'DEFINIR_CAPITAO', teamId, {'alunoId': athleteId});
+    await _audit(actorUserId, 'DEFINIR_CAPITAO', teamId, {
+      'alunoId': athleteId,
+    });
     return detail(teamId);
   }
 
@@ -410,10 +412,7 @@ class TimeRepository {
       '''),
       parameters: {'timeId': teamId},
     );
-    return {
-      'time': team,
-      'desempenho': result.single.toColumnMap(),
-    };
+    return {'time': team, 'desempenho': result.single.toColumnMap()};
   }
 
   Future<void> _audit(

@@ -8,7 +8,7 @@ void showSuccess(BuildContext context, String message) {
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
-      SnackBar(backgroundColor: AetherColors.success, content: Text(message)),
+      SnackBar(backgroundColor: AceColors.success, content: Text(message)),
     );
 }
 
@@ -17,7 +17,7 @@ void showFailure(BuildContext context, Object error) {
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
-      SnackBar(backgroundColor: AetherColors.danger, content: Text(message)),
+      SnackBar(backgroundColor: AceColors.danger, content: Text(message)),
     );
 }
 
@@ -51,8 +51,8 @@ class PageBody extends StatelessWidget {
   }
 }
 
-class AetherLogo extends StatelessWidget {
-  const AetherLogo({this.height = 58, this.wordmark = false, super.key});
+class AceLogo extends StatelessWidget {
+  const AceLogo({this.height = 58, this.wordmark = false, super.key});
 
   final double height;
   final bool wordmark;
@@ -60,13 +60,11 @@ class AetherLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image.asset(
-      wordmark
-          ? 'assets/images/aether_wordmark.png'
-          : 'assets/images/aether_logo.png',
+      'assets/images/ace_logo.png',
       height: height,
       fit: BoxFit.contain,
       errorBuilder: (_, _, _) =>
-          Icon(Icons.sports_soccer, size: height, color: AetherColors.navy),
+          Icon(Icons.sports_soccer, size: height, color: AceColors.navy),
     );
   }
 }
@@ -96,7 +94,7 @@ class SectionHeader extends StatelessWidget {
                 title,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: AetherColors.navyDark,
+                  color: AceColors.navyDark,
                 ),
               ),
               if (subtitle != null) ...[
@@ -171,16 +169,16 @@ class MetricCard extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: AetherColors.beigeStrong,
+              color: AceColors.beigeStrong,
               borderRadius: BorderRadius.circular(13),
             ),
-            child: Icon(icon, color: AetherColors.navy),
+            child: Icon(icon, color: AceColors.orange),
           ),
           const Spacer(),
           Text(
             value.toString(),
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              color: AetherColors.navyDark,
+              color: AceColors.navyDark,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -200,10 +198,10 @@ class StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final normalized = status?.toString().toUpperCase() ?? '';
     final color = switch (normalized) {
-      'EM_ANDAMENTO' || 'ATIVA' || 'APROVADA' => AetherColors.success,
-      'AGENDADA' || 'INSCRICOES_ABERTAS' || 'PENDENTE' => AetherColors.warning,
-      'ENCERRADA' || 'FINALIZADA' => AetherColors.navy,
-      'CANCELADA' || 'REJEITADA' => AetherColors.danger,
+      'EM_ANDAMENTO' || 'ATIVA' || 'APROVADA' => AceColors.success,
+      'AGENDADA' || 'INSCRICOES_ABERTAS' || 'PENDENTE' => AceColors.warning,
+      'ENCERRADA' || 'FINALIZADA' => AceColors.navy,
+      'CANCELADA' || 'REJEITADA' => AceColors.danger,
       _ => Colors.blueGrey,
     };
     return Container(
@@ -246,11 +244,7 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 62,
-              color: AetherColors.navy.withValues(alpha: .35),
-            ),
+            Icon(icon, size: 62, color: AceColors.navy.withValues(alpha: .35)),
             const SizedBox(height: 16),
             Text(
               title,
@@ -376,7 +370,7 @@ class KeyValueRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 19, color: AetherColors.navy),
+            Icon(icon, size: 19, color: AceColors.orange),
             const SizedBox(width: 10),
           ],
           SizedBox(
@@ -433,7 +427,7 @@ class MatchCard extends StatelessWidget {
                   textOf(data, ['competicao'], fallback: 'Competição'),
                   style: const TextStyle(
                     fontWeight: FontWeight.w800,
-                    color: AetherColors.navy,
+                    color: AceColors.navy,
                   ),
                 ),
               ),
@@ -456,7 +450,7 @@ class MatchCard extends StatelessWidget {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: AetherColors.beigeStrong,
+                  color: AceColors.beigeStrong,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Text(
@@ -464,7 +458,7 @@ class MatchCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
-                    color: AetherColors.navyDark,
+                    color: AceColors.navyDark,
                   ),
                 ),
               ),

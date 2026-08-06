@@ -6,8 +6,12 @@ import 'core/session_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('pt_BR');
   final session = SessionController();
+  runApp(AceApp(session: session));
+
+  await Future.wait([
+    initializeDateFormatting('pt_BR'),
+    Future<void>.delayed(const Duration(milliseconds: 1200)),
+  ]);
   await session.initialize();
-  runApp(AetherApp(session: session));
 }
