@@ -131,12 +131,16 @@ class _CompetitionListScreenState extends State<CompetitionListScreen> {
                                     width: 48,
                                     height: 48,
                                     decoration: BoxDecoration(
-                                      color: AceColors.beigeStrong,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primaryContainer,
                                       borderRadius: BorderRadius.circular(14),
                                     ),
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.emoji_events_outlined,
-                                      color: AceColors.navy,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimaryContainer,
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -160,31 +164,41 @@ class _CompetitionListScreenState extends State<CompetitionListScreen> {
                                   textOf(item, ['descricao']),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(color: Colors.black54),
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
                                 ),
                               ],
                               const Divider(height: 24),
                               Row(
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.calendar_today_outlined,
                                     size: 17,
-                                    color: Colors.black45,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                                   const SizedBox(width: 6),
                                   Expanded(
                                     child: Text(
                                       '${formatDate(item['data_inicio'])} a ${formatDate(item['data_fim'])}',
-                                      style: const TextStyle(
-                                        color: Colors.black54,
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                   ),
                                   Text(
                                     '${intOf(item, ['times_inscritos'])} times',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.w700,
-                                      color: AceColors.navy,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
                                     ),
                                   ),
                                 ],
@@ -339,7 +353,7 @@ class _OverviewTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SurfaceCard(
-            color: AceColors.navy,
+            color: AcePalette.of(context).navy,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -462,7 +476,7 @@ class _OverviewTab extends StatelessWidget {
               (phase) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: ListTile(
-                  tileColor: Colors.white,
+                  tileColor: Theme.of(context).colorScheme.surface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -506,13 +520,13 @@ class _StandingsTab extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundColor: index < 3
-                    ? AceColors.orange.withValues(alpha: .18)
-                    : AceColors.beigeStrong,
+                    ? Theme.of(context).colorScheme.secondaryContainer
+                    : Theme.of(context).colorScheme.primaryContainer,
                 child: Text(
                   '${index + 1}º',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w900,
-                    color: AceColors.navy,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
@@ -527,8 +541,8 @@ class _StandingsTab extends StatelessWidget {
                     ),
                     Text(
                       '${intOf(item, ['jogos'])} J • ${intOf(item, ['vitorias'])} V • ${intOf(item, ['empates'])} E • ${intOf(item, ['derrotas'])} D',
-                      style: const TextStyle(
-                        color: Colors.black54,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 12,
                       ),
                     ),
@@ -540,14 +554,17 @@ class _StandingsTab extends StatelessWidget {
                 children: [
                   Text(
                     '${intOf(item, ['pontos'])} pts',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w900,
-                      color: AceColors.navy,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   Text(
                     'Saldo ${intOf(item, ['saldo_gols', 'saldo'])}',
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -586,13 +603,13 @@ class _CompetitionTableTab extends StatelessWidget {
             (phase) => Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: ListTile(
-                tileColor: Colors.white,
+                tileColor: Theme.of(context).colorScheme.surface,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
-                leading: const Icon(
+                leading: Icon(
                   Icons.account_tree_outlined,
-                  color: AceColors.navy,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 title: Text(
                   textOf(phase, ['nome']),
@@ -672,7 +689,7 @@ class _TeamPickerScreenState extends State<TeamPickerScreen> {
               itemBuilder: (_, index) {
                 final team = _teams[index];
                 return ListTile(
-                  tileColor: Colors.white,
+                  tileColor: Theme.of(context).colorScheme.surface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -770,10 +787,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
         title: const Text('Calendário de jogos'),
         actions: [
           IconButton(
+            tooltip: 'Filtrar por período',
             onPressed: _pickPeriod,
             icon: const Icon(Icons.date_range),
           ),
           IconButton(
+            tooltip: 'Ver locais',
             onPressed: () => pushPage(context, const LocationsScreen()),
             icon: const Icon(Icons.location_on_outlined),
           ),
@@ -790,12 +809,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 children: [
                   if (_from != null) ...[
                     SurfaceCard(
-                      color: AceColors.beigeStrong,
+                      color: Theme.of(context).colorScheme.primaryContainer,
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.filter_alt_outlined,
-                            color: AceColors.navy,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onPrimaryContainer,
                           ),
                           const SizedBox(width: 10),
                           Expanded(
@@ -804,6 +825,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             ),
                           ),
                           IconButton(
+                            tooltip: 'Limpar filtro de período',
                             onPressed: () {
                               setState(() {
                                 _from = null;
@@ -842,6 +864,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                 right: 8,
                                 bottom: 8,
                                 child: IconButton.filledTonal(
+                                  tooltip: 'Editar partida agendada',
                                   onPressed: () async {
                                     final changed = await pushPage<bool>(
                                       context,
@@ -965,11 +988,14 @@ class _ScheduleMatchScreenState extends State<ScheduleMatchScreen> {
             MatchCard(data: widget.match),
             const SizedBox(height: 18),
             ListTile(
-              tileColor: Colors.white,
+              tileColor: Theme.of(context).colorScheme.surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),
-              leading: const Icon(Icons.calendar_month, color: AceColors.navy),
+              leading: Icon(
+                Icons.calendar_month,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               title: const Text('Data e horário'),
               subtitle: Text(
                 formatDate(_dateTime.toIso8601String(), withTime: true),
@@ -1093,12 +1119,16 @@ class _LocationsScreenState extends State<LocationsScreen> {
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: AceColors.beigeStrong,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primaryContainer,
                                 borderRadius: BorderRadius.circular(14),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.stadium_outlined,
-                                color: AceColors.navy,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onPrimaryContainer,
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -1114,16 +1144,20 @@ class _LocationsScreenState extends State<LocationsScreen> {
                                   ),
                                   Text(
                                     '${statusLabel(item['tipo'])} • ${textOf(item, ['cidade'])}/${textOf(item, ['estado'])}',
-                                    style: const TextStyle(
-                                      color: Colors.black54,
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                                     ),
                                   ),
                                   if (item['capacidade'] != null)
                                     Text(
                                       'Capacidade: ${item['capacidade']}',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 12,
-                                        color: AceColors.navy,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
                                       ),
                                     ),
                                 ],
@@ -1231,6 +1265,7 @@ class _LocationFormScreenState extends State<LocationFormScreen> {
                 controller: _name,
                 label: 'Nome do local',
                 prefixIcon: Icons.stadium_outlined,
+                required: true,
                 validator: requiredField,
               ),
               const SizedBox(height: 12),
@@ -1291,6 +1326,7 @@ class _LocationFormScreenState extends State<LocationFormScreen> {
                     child: AppTextFormField(
                       controller: _city,
                       label: 'Cidade',
+                      required: true,
                       validator: requiredField,
                     ),
                   ),
@@ -1300,6 +1336,7 @@ class _LocationFormScreenState extends State<LocationFormScreen> {
                     child: AppTextFormField(
                       controller: _state,
                       label: 'UF',
+                      required: true,
                       validator: (value) =>
                           value?.trim().length == 2 ? null : 'UF inválida',
                     ),

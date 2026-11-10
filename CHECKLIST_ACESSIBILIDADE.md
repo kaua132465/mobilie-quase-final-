@@ -1,0 +1,25 @@
+# Checklist de acessibilidade ACE Mobile
+
+- [x] Labels visíveis nos campos reutilizáveis
+- [x] Obrigatoriedade indicada por texto e mensagem de validação
+- [x] Mensagens de erro textuais e categorizadas
+- [x] Semântica de dashboard, rankings, partidas e estados globais
+- [x] Feedback de carregamento como região ao vivo
+- [x] Feedback de sucesso e falha anunciado
+- [x] Contraste principal revisado no tema
+- [x] Estados vazios e botão de nova tentativa reutilizáveis
+- [x] Botões Material com alvo mínimo de 48 dp
+- [x] Navegação principal com labels
+- [x] Ordem de foco e ações de teclado no login
+- [x] Ranking sem dependência exclusiva de cor
+- [x] Partidas e status com texto + ícone
+- [x] Alternância mostrar/ocultar senha identificada
+- [x] Confirmação textual para remoção de atleta do time e logout
+- [x] Animação de sessão respeita redução de movimento
+- [x] Testes automatizados dos componentes acessíveis
+- [ ] Auditoria manual completa com TalkBack em Android físico
+- [ ] Teste manual de todas as telas com fonte a 200%
+- [ ] Teste manual integral em 320/360/412 px e tablet
+- [ ] Avaliação com usuários reais de todos os perfis
+- [ ] Medição instrumental de contraste de todas as imagens e estados de terceiros
+- [ ] Validação completa com Switch Access

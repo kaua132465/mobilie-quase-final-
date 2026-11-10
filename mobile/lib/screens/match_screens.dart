@@ -36,12 +36,14 @@ class _MatchHubScreenState extends State<MatchHubScreen>
     return Column(
       children: [
         Material(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           child: TabBar(
             controller: _tabs,
-            labelColor: AceColors.navy,
-            unselectedLabelColor: Colors.black45,
-            indicatorColor: AceColors.navy,
+            labelColor: Theme.of(context).colorScheme.primary,
+            unselectedLabelColor: Theme.of(
+              context,
+            ).colorScheme.onSurfaceVariant,
+            indicatorColor: Theme.of(context).colorScheme.primary,
             tabs: const [
               Tab(text: 'Ao vivo'),
               Tab(text: 'Calendário'),
@@ -124,7 +126,7 @@ class _LiveMatchesScreenState extends State<LiveMatchesScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           SurfaceCard(
-            color: AceColors.navy,
+            color: AcePalette.of(context).navy,
             child: Row(
               children: [
                 const _LivePulse(),
@@ -148,6 +150,7 @@ class _LiveMatchesScreenState extends State<LiveMatchesScreen> {
                   ),
                 ),
                 IconButton(
+                  tooltip: 'Atualizar partidas ao vivo',
                   onPressed: _load,
                   icon: const Icon(Icons.refresh, color: Colors.white),
                 ),
@@ -210,7 +213,19 @@ class _LivePulseState extends State<_LivePulse>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
-    )..repeat(reverse: true);
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _controller
+        ..stop()
+        ..value = 1;
+    } else if (!_controller.isAnimating) {
+      _controller.repeat(reverse: true);
+    }
   }
 
   @override
@@ -221,16 +236,18 @@ class _LivePulseState extends State<_LivePulse>
 
   @override
   Widget build(BuildContext context) {
+    final dot = Container(
+      width: 14,
+      height: 14,
+      decoration: const BoxDecoration(
+        color: Colors.redAccent,
+        shape: BoxShape.circle,
+      ),
+    );
+    if (MediaQuery.disableAnimationsOf(context)) return dot;
     return FadeTransition(
       opacity: Tween(begin: .45, end: 1.0).animate(_controller),
-      child: Container(
-        width: 14,
-        height: 14,
-        decoration: const BoxDecoration(
-          color: Colors.redAccent,
-          shape: BoxShape.circle,
-        ),
-      ),
+      child: dot,
     );
   }
 }
@@ -490,7 +507,11 @@ class _LiveMatchScreenState extends State<LiveMatchScreen> {
       appBar: AppBar(
         title: const Text('Partida'),
         actions: [
-          IconButton(onPressed: _load, icon: const Icon(Icons.refresh)),
+          IconButton(
+            tooltip: 'Atualizar partida',
+            onPressed: _load,
+            icon: const Icon(Icons.refresh),
+          ),
         ],
       ),
       body: _loading
@@ -594,10 +615,12 @@ class _LiveMatchScreenState extends State<LiveMatchScreen> {
                   ),
                   const SizedBox(height: 10),
                   if (asList(_match['arbitragem']).isEmpty)
-                    const SurfaceCard(
+                    SurfaceCard(
                       child: Text(
                         'Nenhum árbitro designado.',
-                        style: TextStyle(color: Colors.black54),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     )
                   else
@@ -654,100 +677,110 @@ class _Scoreboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AceColors.navyDark, AceColors.navy],
+    final palette = AcePalette.of(context);
+    final home = textOf(match, ['time_casa']);
+    final away = textOf(match, ['time_visitante']);
+    final homeScore = intOf(match, ['placar_casa']);
+    final awayScore = intOf(match, ['placar_visitante']);
+    return Semantics(
+      liveRegion: true,
+      label:
+          '$home, $homeScore pontos. $away, $awayScore pontos. '
+          'Partida ${statusLabel(match['status'])}.',
+      excludeSemantics: true,
+      child: Container(
+        padding: const EdgeInsets.all(22),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [palette.navyDark, palette.navy]),
+          borderRadius: BorderRadius.circular(24),
         ),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const _LivePulse(),
-              const SizedBox(width: 8),
-              StatusBadge(match['status']),
-              if (boolOf(match, ['publicado'])) ...[
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const _LivePulse(),
                 const SizedBox(width: 8),
-                const Chip(
-                  label: Text('Publicado'),
-                  avatar: Icon(Icons.public, size: 16),
-                ),
+                StatusBadge(match['status']),
+                if (boolOf(match, ['publicado'])) ...[
+                  const SizedBox(width: 8),
+                  const Chip(
+                    label: Text('Publicado'),
+                    avatar: Icon(Icons.public, size: 16),
+                  ),
+                ],
               ],
-            ],
-          ),
-          const SizedBox(height: 22),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.shield_outlined,
-                      color: Colors.white,
-                      size: 42,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      textOf(match, ['time_casa']),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
+            ),
+            const SizedBox(height: 22),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.shield_outlined,
                         color: Colors.white,
-                        fontWeight: FontWeight.w800,
+                        size: 42,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 14,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Text(
-                  '${intOf(match, ['placar_casa'])} × ${intOf(match, ['placar_visitante'])}',
-                  style: const TextStyle(
-                    fontSize: 34,
-                    fontWeight: FontWeight.w900,
-                    color: AceColors.navyDark,
+                      const SizedBox(height: 8),
+                      Text(
+                        textOf(match, ['time_casa']),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.shield_outlined,
-                      color: Colors.white,
-                      size: 42,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Text(
+                    '${intOf(match, ['placar_casa'])} × ${intOf(match, ['placar_visitante'])}',
+                    style: TextStyle(
+                      fontSize: 34,
+                      fontWeight: FontWeight.w900,
+                      color: palette.navyDark,
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      textOf(match, ['time_visitante']),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          Text(
-            'Atualizado ${formatDate(match['atualizado_em'], withTime: true)}',
-            style: const TextStyle(color: Colors.white60, fontSize: 12),
-          ),
-        ],
+                Expanded(
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.shield_outlined,
+                        color: Colors.white,
+                        size: 42,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        textOf(match, ['time_visitante']),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Text(
+              'Atualizado ${formatDate(match['atualizado_em'], withTime: true)}',
+              style: const TextStyle(color: Colors.white60, fontSize: 12),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -793,10 +826,12 @@ class _ControlGrid extends StatelessWidget {
         ('Arbitragem', Icons.sports_score_outlined, onReferee),
     ];
     if (actions.isEmpty) {
-      return const SurfaceCard(
+      return SurfaceCard(
         child: Text(
           'Não há ações disponíveis para o status atual.',
-          style: TextStyle(color: Colors.black54),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       );
     }
@@ -828,6 +863,7 @@ class _EventTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AcePalette.of(context);
     final type = event['tipo']?.toString() ?? '';
     final icon = switch (type) {
       'PONTUACAO' => Icons.sports_soccer,
@@ -837,10 +873,10 @@ class _EventTile extends StatelessWidget {
       _ => Icons.flag_outlined,
     };
     final color = switch (type) {
-      'PONTUACAO' => AceColors.success,
+      'PONTUACAO' => palette.success,
       'CARTAO_AMARELO' => Colors.amber.shade700,
-      'CARTAO_VERMELHO' => AceColors.danger,
-      _ => AceColors.orange,
+      'CARTAO_VERMELHO' => palette.danger,
+      _ => palette.orange,
     };
     return SurfaceCard(
       child: Row(
@@ -860,12 +896,17 @@ class _EventTile extends StatelessWidget {
                 ),
                 Text(
                   '${textOf(event, ['time'])}${textOf(event, ['atleta'], fallback: '').isNotEmpty ? ' • ${textOf(event, ['atleta'])}' : ''}',
-                  style: const TextStyle(color: Colors.black54),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 if (textOf(event, ['observacao'], fallback: '').isNotEmpty)
                   Text(
                     textOf(event, ['observacao']),
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
               ],
             ),
@@ -873,9 +914,9 @@ class _EventTile extends StatelessWidget {
           if (event['minuto'] != null)
             Text(
               '${event['minuto']}′',
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w900,
-                color: AceColors.navy,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
         ],
@@ -1274,11 +1315,13 @@ class _AssignRefereeScreenState extends State<AssignRefereeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SurfaceCard(
-              color: AceColors.beigeStrong,
+            SurfaceCard(
+              color: Theme.of(context).colorScheme.primaryContainer,
               child: Text(
                 'A API atual ainda não possui uma rota de listagem de árbitros. O ID do árbitro de demonstração já está preenchido.',
-                style: TextStyle(color: AceColors.navyDark),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -1286,6 +1329,7 @@ class _AssignRefereeScreenState extends State<AssignRefereeScreen> {
               controller: _refereeId,
               label: 'ID do árbitro',
               prefixIcon: Icons.badge_outlined,
+              required: true,
               validator: requiredField,
             ),
             const SizedBox(height: 12),

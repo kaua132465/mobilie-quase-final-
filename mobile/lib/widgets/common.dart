@@ -1,24 +1,43 @@
 import 'package:flutter/material.dart';
 
-import '../core/api_client.dart';
+import '../core/accessibility/accessibility_utils.dart';
 import '../core/data_helpers.dart';
 import '../core/theme.dart';
 
 void showSuccess(BuildContext context, String message) {
+  final palette = AcePalette.of(context);
+  final foreground = Theme.of(context).brightness == Brightness.dark
+      ? Colors.black
+      : Colors.white;
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
-      SnackBar(backgroundColor: AceColors.success, content: Text(message)),
+      SnackBar(
+        backgroundColor: palette.success,
+        content: Semantics(
+          liveRegion: true,
+          child: Text(message, style: TextStyle(color: foreground)),
+        ),
+      ),
     );
+  AccessibilityUtils.announce(context, message);
 }
 
 void showFailure(BuildContext context, Object error) {
-  final message = error is ApiFailure ? error.message : error.toString();
+  final message = AccessibilityUtils.errorMessage(error);
+  final scheme = Theme.of(context).colorScheme;
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
-      SnackBar(backgroundColor: AceColors.danger, content: Text(message)),
+      SnackBar(
+        backgroundColor: scheme.error,
+        content: Semantics(
+          liveRegion: true,
+          child: Text(message, style: TextStyle(color: scheme.onError)),
+        ),
+      ),
     );
+  AccessibilityUtils.announce(context, message);
 }
 
 Future<T?> pushPage<T>(BuildContext context, Widget page) {
@@ -63,8 +82,11 @@ class AceLogo extends StatelessWidget {
       'assets/images/ace_logo.png',
       height: height,
       fit: BoxFit.contain,
-      errorBuilder: (_, _, _) =>
-          Icon(Icons.sports_soccer, size: height, color: AceColors.navy),
+      errorBuilder: (_, _, _) => Icon(
+        Icons.sports_soccer,
+        size: height,
+        color: Theme.of(context).colorScheme.primary,
+      ),
     );
   }
 }
@@ -90,20 +112,23 @@ class SectionHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: AceColors.navyDark,
+              Semantics(
+                header: true,
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
               ),
               if (subtitle != null) ...[
                 const SizedBox(height: 3),
                 Text(
                   subtitle!,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.black54),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ],
@@ -121,6 +146,7 @@ class SurfaceCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(16),
     this.onTap,
     this.color,
+    this.semanticLabel,
     super.key,
   });
 
@@ -128,6 +154,7 @@ class SurfaceCard extends StatelessWidget {
   final EdgeInsets padding;
   final VoidCallback? onTap;
   final Color? color;
+  final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -135,11 +162,21 @@ class SurfaceCard extends StatelessWidget {
       color: color,
       child: Padding(padding: padding, child: child),
     );
-    if (onTap == null) return card;
-    return InkWell(
-      borderRadius: BorderRadius.circular(20),
-      onTap: onTap,
-      child: card,
+    if (onTap == null) {
+      return semanticLabel == null
+          ? card
+          : Semantics(label: semanticLabel, child: card);
+    }
+    return Semantics(
+      button: true,
+      label: semanticLabel,
+      hint: 'Toque duas vezes para visualizar',
+      excludeSemantics: semanticLabel != null,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: onTap,
+        child: card,
+      ),
     );
   }
 }
@@ -162,6 +199,7 @@ class MetricCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return SurfaceCard(
       onTap: onTap,
+      semanticLabel: '$label. $value cadastrado(s).',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -169,20 +207,25 @@ class MetricCard extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: AceColors.beigeStrong,
+              color: Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(13),
             ),
-            child: Icon(icon, color: AceColors.orange),
+            child: Icon(icon, color: Theme.of(context).colorScheme.secondary),
           ),
           const Spacer(),
           Text(
             value.toString(),
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              color: AceColors.navyDark,
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w900,
             ),
           ),
-          Text(label, style: const TextStyle(color: Colors.black54)),
+          Text(
+            label,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
@@ -196,26 +239,46 @@ class StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AcePalette.of(context);
     final normalized = status?.toString().toUpperCase() ?? '';
     final color = switch (normalized) {
-      'EM_ANDAMENTO' || 'ATIVA' || 'APROVADA' => AceColors.success,
-      'AGENDADA' || 'INSCRICOES_ABERTAS' || 'PENDENTE' => AceColors.warning,
-      'ENCERRADA' || 'FINALIZADA' => AceColors.navy,
-      'CANCELADA' || 'REJEITADA' => AceColors.danger,
+      'EM_ANDAMENTO' || 'ATIVA' || 'APROVADA' => palette.success,
+      'AGENDADA' || 'INSCRICOES_ABERTAS' || 'PENDENTE' => palette.warning,
+      'ENCERRADA' || 'FINALIZADA' => Theme.of(context).colorScheme.primary,
+      'CANCELADA' || 'REJEITADA' => palette.danger,
       _ => Colors.blueGrey,
     };
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: .12),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        statusLabel(status),
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
+    final icon = switch (normalized) {
+      'EM_ANDAMENTO' || 'ATIVA' || 'APROVADA' => Icons.check_circle_outline,
+      'AGENDADA' || 'INSCRICOES_ABERTAS' || 'PENDENTE' => Icons.schedule,
+      'ENCERRADA' || 'FINALIZADA' => Icons.stop_circle_outlined,
+      'CANCELADA' || 'REJEITADA' => Icons.cancel_outlined,
+      _ => Icons.info_outline,
+    };
+    final label = statusLabel(status);
+    return Semantics(
+      label: 'Status: $label',
+      excludeSemantics: true,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: .12),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 16),
+            const SizedBox(width: 5),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -244,7 +307,13 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 62, color: AceColors.navy.withValues(alpha: .35)),
+            Icon(
+              icon,
+              size: 62,
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: .6),
+            ),
             const SizedBox(height: 16),
             Text(
               title,
@@ -256,7 +325,9 @@ class EmptyState extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.black54),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             if (action != null) ...[const SizedBox(height: 18), action!],
           ],
@@ -274,17 +345,19 @@ class ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final message = error is ApiFailure
-        ? (error as ApiFailure).message
-        : error.toString();
-    return EmptyState(
-      icon: Icons.cloud_off_outlined,
-      title: 'Não foi possível carregar',
-      message: message,
-      action: FilledButton.icon(
-        onPressed: onRetry,
-        icon: const Icon(Icons.refresh),
-        label: const Text('Tentar novamente'),
+    final message = AccessibilityUtils.errorMessage(error);
+    return Semantics(
+      liveRegion: true,
+      label: 'Erro. $message',
+      child: EmptyState(
+        icon: Icons.cloud_off_outlined,
+        title: 'Não foi possível carregar',
+        message: message,
+        action: FilledButton.icon(
+          onPressed: onRetry,
+          icon: const Icon(Icons.refresh),
+          label: const Text('Tentar novamente'),
+        ),
       ),
     );
   }
@@ -296,16 +369,26 @@ class LoadingState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 14),
-            Text(message, style: const TextStyle(color: Colors.black54)),
-          ],
+    return Semantics(
+      liveRegion: true,
+      label: message,
+      excludeSemantics: true,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 14),
+              Text(
+                message,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -328,23 +411,29 @@ class SearchBarField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      onSubmitted: onSubmitted,
-      onChanged: onChanged,
-      textInputAction: TextInputAction.search,
-      decoration: InputDecoration(
-        hintText: hint,
-        prefixIcon: const Icon(Icons.search),
-        suffixIcon: controller.text.isEmpty
-            ? null
-            : IconButton(
-                onPressed: () {
-                  controller.clear();
-                  onSubmitted('');
-                },
-                icon: const Icon(Icons.close),
-              ),
+    return Semantics(
+      textField: true,
+      label: hint,
+      child: TextField(
+        controller: controller,
+        onSubmitted: onSubmitted,
+        onChanged: onChanged,
+        textInputAction: TextInputAction.search,
+        decoration: InputDecoration(
+          labelText: hint,
+          hintText: hint,
+          prefixIcon: const Icon(Icons.search),
+          suffixIcon: controller.text.isEmpty
+              ? null
+              : IconButton(
+                  tooltip: 'Limpar pesquisa',
+                  onPressed: () {
+                    controller.clear();
+                    onSubmitted('');
+                  },
+                  icon: const Icon(Icons.close),
+                ),
+        ),
       ),
     );
   }
@@ -370,15 +459,19 @@ class KeyValueRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 19, color: AceColors.orange),
+            Icon(
+              icon,
+              size: 19,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
             const SizedBox(width: 10),
           ],
           SizedBox(
             width: 110,
             child: Text(
               label,
-              style: const TextStyle(
-                color: Colors.black54,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -417,6 +510,11 @@ class MatchCard extends StatelessWidget {
     final awayScore = intOf(data, ['placar_visitante', 'placarVisitante']);
     return SurfaceCard(
       onTap: onTap,
+      semanticLabel:
+          '$home, $homeScore pontos. $away, $awayScore pontos. '
+          'Status: ${statusLabel(data['status'])}. '
+          '${formatDate(data['data_hora'] ?? data['dataHora'], withTime: true)}. '
+          '${textOf(data, ['local'], fallback: 'Local a definir')}.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -425,9 +523,9 @@ class MatchCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   textOf(data, ['competicao'], fallback: 'Competição'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w800,
-                    color: AceColors.navy,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
@@ -450,15 +548,15 @@ class MatchCard extends StatelessWidget {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: AceColors.beigeStrong,
+                  color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Text(
                   '$homeScore × $awayScore',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
-                    color: AceColors.navyDark,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
                   ),
                 ),
               ),
@@ -474,7 +572,11 @@ class MatchCard extends StatelessWidget {
           const SizedBox(height: 14),
           Row(
             children: [
-              const Icon(Icons.schedule, size: 17, color: Colors.black45),
+              Icon(
+                Icons.schedule,
+                size: 17,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
@@ -482,20 +584,24 @@ class MatchCard extends StatelessWidget {
                     data['data_hora'] ?? data['dataHora'],
                     withTime: true,
                   ),
-                  style: const TextStyle(color: Colors.black54),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.location_on_outlined,
                 size: 17,
-                color: Colors.black45,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 4),
               Flexible(
                 child: Text(
                   textOf(data, ['local'], fallback: 'Local a definir'),
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.black54),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
             ],
@@ -522,6 +628,9 @@ class AppTextFormField extends StatelessWidget {
     this.textInputAction,
     this.maxLength,
     this.textCapitalization = TextCapitalization.none,
+    this.required = false,
+    this.focusNode,
+    this.onFieldSubmitted,
     super.key,
   });
 
@@ -539,11 +648,15 @@ class AppTextFormField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final int? maxLength;
   final TextCapitalization textCapitalization;
+  final bool required;
+  final FocusNode? focusNode;
+  final ValueChanged<String>? onFieldSubmitted;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      focusNode: focusNode,
       keyboardType: keyboardType,
       obscureText: obscureText,
       validator: validator,
@@ -553,8 +666,10 @@ class AppTextFormField extends StatelessWidget {
       textInputAction: textInputAction,
       maxLength: maxLength,
       textCapitalization: textCapitalization,
+      onFieldSubmitted: onFieldSubmitted,
       decoration: InputDecoration(
-        labelText: label,
+        labelText: required ? '$label *' : label,
+        helperText: required ? 'Campo obrigatório' : null,
         hintText: hint,
         prefixIcon: prefixIcon == null ? null : Icon(prefixIcon),
         suffixIcon: suffixIcon,
@@ -564,8 +679,40 @@ class AppTextFormField extends StatelessWidget {
 }
 
 String? requiredField(String? value) {
-  if (value == null || value.trim().isEmpty) return 'Campo obrigatório';
+  if (value == null || value.trim().isEmpty) {
+    return 'Preencha este campo obrigatório.';
+  }
   return null;
+}
+
+Future<bool> showConfirmationDialog(
+  BuildContext context, {
+  required String title,
+  required String message,
+  String confirmLabel = 'Excluir',
+}) async {
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: Semantics(header: true, child: Text(title)),
+      content: Text(message),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, false),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: Theme.of(dialogContext).colorScheme.error,
+            foregroundColor: Theme.of(dialogContext).colorScheme.onError,
+          ),
+          onPressed: () => Navigator.pop(dialogContext, true),
+          child: Text(confirmLabel),
+        ),
+      ],
+    ),
+  );
+  return confirmed ?? false;
 }
 
 String? emailField(String? value) {

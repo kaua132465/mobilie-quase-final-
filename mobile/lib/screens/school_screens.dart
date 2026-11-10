@@ -144,6 +144,7 @@ class _SchoolProfileScreenState extends State<SchoolProfileScreen> {
                         controller: _name,
                         label: 'Nome da escola',
                         prefixIcon: Icons.school_outlined,
+                        required: true,
                         validator: requiredField,
                       ),
                       const SizedBox(height: 12),
@@ -152,6 +153,7 @@ class _SchoolProfileScreenState extends State<SchoolProfileScreen> {
                         label: 'E-mail',
                         prefixIcon: Icons.mail_outline,
                         keyboardType: TextInputType.emailAddress,
+                        required: true,
                         validator: emailField,
                       ),
                       const SizedBox(height: 12),
@@ -333,12 +335,16 @@ class _SchoolListScreenState extends State<SchoolListScreen> {
                                 ),
                                 child: Row(
                                   children: [
-                                    const CircleAvatar(
+                                    CircleAvatar(
                                       radius: 26,
-                                      backgroundColor: AceColors.beigeStrong,
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.primaryContainer,
                                       child: Icon(
                                         Icons.school_outlined,
-                                        color: AceColors.navy,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onPrimaryContainer,
                                       ),
                                     ),
                                     const SizedBox(width: 14),
@@ -356,8 +362,10 @@ class _SchoolListScreenState extends State<SchoolListScreen> {
                                           const SizedBox(height: 4),
                                           Text(
                                             '${textOf(school, ['cidade'])} • ${textOf(school, ['estado'])}',
-                                            style: const TextStyle(
-                                              color: Colors.black54,
+                                            style: TextStyle(
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onSurfaceVariant,
                                             ),
                                           ),
                                           const SizedBox(height: 7),
@@ -508,20 +516,19 @@ class _SchoolHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AcePalette.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AceColors.navy, AceColors.blue],
-        ),
+        gradient: LinearGradient(colors: [palette.navy, palette.blue]),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 34,
             backgroundColor: Colors.white,
-            child: Icon(Icons.school, size: 36, color: AceColors.navy),
+            child: Icon(Icons.school, size: 36, color: palette.navy),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -563,11 +570,14 @@ class _MiniCount extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 15, color: AceColors.navy),
+        Icon(icon, size: 15, color: Theme.of(context).colorScheme.primary),
         const SizedBox(width: 4),
         Text(
           label,
-          style: const TextStyle(fontSize: 12, color: Colors.black54),
+          style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );

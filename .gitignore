@@ -19,6 +19,13 @@
 # Cobertura e logs
 **/coverage/
 **/*.log
+logs/
+
+# Artefatos locais e arquivos gerados
+backups/
+output/
+tmp/
+screenshots_tcc/
 
 # Sistema operacional
 Thumbs.db

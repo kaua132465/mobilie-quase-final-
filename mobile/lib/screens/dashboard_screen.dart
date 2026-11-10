@@ -64,6 +64,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final upcoming = asList(_dashboard['proximosJogos']);
     final ranking = asList(_dashboard['rankingEscolas']);
     final athletePhoto = _athletePhoto();
+    final palette = AcePalette.of(context);
 
     return RefreshIndicator(
       onRefresh: _load,
@@ -73,8 +74,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Container(
             padding: const EdgeInsets.all(22),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AceColors.navy, AceColors.blue],
+              gradient: LinearGradient(
+                colors: [palette.navy, palette.blue],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -85,7 +86,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 if (session.profile == 'ALUNO' && athletePhoto != null)
                   CircleAvatar(
                     radius: 36,
-                    backgroundColor: AceColors.beige,
+                    backgroundColor: palette.beige,
                     backgroundImage: athletePhoto,
                   )
                 else
@@ -135,7 +136,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             physics: const NeverScrollableScrollPhysics(),
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            childAspectRatio: 1.32,
+            childAspectRatio: MediaQuery.textScalerOf(context).scale(1) > 1.3
+                ? 1.05
+                : 1.32,
             children: [
               MetricCard(
                 label: 'Jogos hoje',
@@ -175,6 +178,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             title: 'Ações rápidas',
             subtitle: 'Atalhos baseados no seu perfil',
             action: IconButton(
+              tooltip: 'Atualizar painel',
               onPressed: _load,
               icon: const Icon(Icons.refresh),
             ),
@@ -305,6 +309,7 @@ class _QuickActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final actions = <_QuickAction>[
       if (profile == 'ESCOLA' || profile == 'ADMINISTRADOR')
         _QuickAction(
@@ -350,27 +355,33 @@ class _QuickActions extends StatelessWidget {
         separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           final action = actions[index];
-          return InkWell(
-            onTap: action.onTap,
-            borderRadius: BorderRadius.circular(18),
-            child: Container(
-              width: 118,
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(action.icon, color: AceColors.orange),
-                  const Spacer(),
-                  Text(
-                    action.label,
-                    maxLines: 2,
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ],
+          return Semantics(
+            button: true,
+            label: action.label,
+            hint: 'Abrir ${action.label}',
+            excludeSemantics: true,
+            child: InkWell(
+              onTap: action.onTap,
+              borderRadius: BorderRadius.circular(18),
+              child: Container(
+                width: 118,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: scheme.surface,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(action.icon, color: scheme.secondary),
+                    const Spacer(),
+                    Text(
+                      action.label,
+                      maxLines: 2,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -394,13 +405,16 @@ class _RankingPreviewRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         CircleAvatar(
           backgroundColor: position <= 3
-              ? AceColors.orange.withValues(alpha: .18)
-              : AceColors.beigeStrong,
-          foregroundColor: position <= 3 ? AceColors.orange : AceColors.navy,
+              ? scheme.secondaryContainer
+              : scheme.primaryContainer,
+          foregroundColor: position <= 3
+              ? scheme.onSecondaryContainer
+              : scheme.onPrimaryContainer,
           child: Text(
             '$positionº',
             style: const TextStyle(fontWeight: FontWeight.w900),
@@ -415,10 +429,7 @@ class _RankingPreviewRow extends StatelessWidget {
         ),
         Text(
           '${intOf(data, ['pontos'])} pts',
-          style: const TextStyle(
-            fontWeight: FontWeight.w900,
-            color: AceColors.navy,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w900, color: scheme.primary),
         ),
       ],
     );

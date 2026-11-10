@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../core/app_scope.dart';
 import '../core/data_helpers.dart';
 import '../core/theme.dart';
+import '../widgets/accessibility_panel.dart';
 import '../widgets/common.dart';
 import 'auth_screens.dart';
 import 'competition_screens.dart';
@@ -54,7 +55,7 @@ class _MenuScreenState extends State<MenuScreen> {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: AceColors.navy,
+            color: AcePalette.of(context).navy,
             borderRadius: BorderRadius.circular(24),
           ),
           child: Row(
@@ -66,8 +67,8 @@ class _MenuScreenState extends State<MenuScreen> {
                 child: athletePhoto == null
                     ? Text(
                         _initials(session.userName),
-                        style: const TextStyle(
-                          color: AceColors.navy,
+                        style: TextStyle(
+                          color: AcePalette.of(context).navy,
                           fontWeight: FontWeight.w900,
                           fontSize: 18,
                         ),
@@ -191,6 +192,12 @@ class _MenuScreenState extends State<MenuScreen> {
         const SectionHeader(title: 'Aplicativo'),
         const SizedBox(height: 10),
         _MenuTile(
+          icon: Icons.accessibility_new,
+          title: 'Acessibilidade',
+          subtitle: 'Fonte, tema e filtros para daltonismo',
+          onTap: () => showAccessibilityPanel(context),
+        ),
+        _MenuTile(
           icon: Icons.info_outline,
           title: 'Sobre o ACE',
           subtitle: 'TCC — gestão esportiva escolar',
@@ -285,7 +292,8 @@ class _MenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = danger ? AceColors.danger : AceColors.navy;
+    final scheme = Theme.of(context).colorScheme;
+    final color = danger ? scheme.error : scheme.primary;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: SurfaceCard(
@@ -318,12 +326,18 @@ class _MenuTile extends StatelessWidget {
                     subtitle,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Colors.black54, fontSize: 12),
+                    style: TextStyle(
+                      color: scheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: danger ? color : Colors.black38),
+            Icon(
+              Icons.chevron_right,
+              color: danger ? color : scheme.onSurfaceVariant,
+            ),
           ],
         ),
       ),
@@ -337,7 +351,10 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sobre o ACE')),
+      appBar: AppBar(
+        title: const Text('Sobre o ACE'),
+        actions: const [AccessibilityButton()],
+      ),
       body: PageBody(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -350,7 +367,7 @@ class AboutScreen extends StatelessWidget {
                     height: 100,
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(28),
                     ),
                     child: const AceLogo(),
@@ -362,9 +379,11 @@ class AboutScreen extends StatelessWidget {
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Sistema de Gestão Esportiva Escolar',
-                    style: TextStyle(color: Colors.black54),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -396,10 +415,12 @@ class AboutScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 14),
-            const Center(
+            Center(
               child: Text(
                 'Projeto de TCC • ACE • 2026',
-                style: TextStyle(color: Colors.black54),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           ],
@@ -421,7 +442,11 @@ class _FeatureLine extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.check_circle, color: AceColors.success, size: 19),
+          Icon(
+            Icons.check_circle,
+            color: AcePalette.of(context).success,
+            size: 19,
+          ),
           const SizedBox(width: 9),
           Expanded(child: Text(text)),
         ],

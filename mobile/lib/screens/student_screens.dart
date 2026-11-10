@@ -114,16 +114,20 @@ class _StudentListScreenState extends State<StudentListScreen> {
                     children: [
                       CircleAvatar(
                         radius: 25,
-                        backgroundColor: AceColors.beigeStrong,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer,
                         backgroundImage: photo,
                         child: photo == null
                             ? Text(
                                 textOf(student, [
                                   'nome',
                                 ], fallback: 'A').substring(0, 1).toUpperCase(),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.w900,
-                                  color: AceColors.navy,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimaryContainer,
                                 ),
                               )
                             : null,
@@ -145,7 +149,11 @@ class _StudentListScreenState extends State<StudentListScreen> {
                                 'escola_nome',
                                 'escolaNome',
                               ], fallback: textOf(student, ['email'])),
-                              style: const TextStyle(color: Colors.black54),
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                             ),
                             const SizedBox(height: 7),
                             Wrap(
@@ -157,9 +165,11 @@ class _StudentListScreenState extends State<StudentListScreen> {
                                 ], fallback: '').isNotEmpty)
                                   Text(
                                     'Matrícula ${textOf(student, ['matricula'])}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.black54,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                                     ),
                                   ),
                               ],
@@ -168,6 +178,7 @@ class _StudentListScreenState extends State<StudentListScreen> {
                         ),
                       ),
                       IconButton(
+                        tooltip: 'Editar atleta',
                         onPressed: () => _openForm(student),
                         icon: const Icon(Icons.edit_outlined),
                       ),
@@ -485,22 +496,34 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                     Center(
                       child: Column(
                         children: [
-                          InkWell(
-                            onTap: _busy ? null : _showPhotoOptions,
-                            borderRadius: BorderRadius.circular(64),
-                            child: CircleAvatar(
-                              radius: 58,
-                              backgroundColor: AceColors.beigeStrong,
-                              backgroundImage: _photoBytes == null
-                                  ? null
-                                  : MemoryImage(_photoBytes!),
-                              child: _photoBytes == null
-                                  ? const Icon(
-                                      Icons.add_a_photo_outlined,
-                                      size: 38,
-                                      color: AceColors.navy,
-                                    )
-                                  : null,
+                          Semantics(
+                            button: true,
+                            enabled: !_busy,
+                            label: _photoBytes == null
+                                ? 'Adicionar foto do atleta'
+                                : 'Alterar foto do atleta',
+                            hint: 'Escolha uma imagem ou use a câmera',
+                            child: InkWell(
+                              onTap: _busy ? null : _showPhotoOptions,
+                              borderRadius: BorderRadius.circular(64),
+                              child: CircleAvatar(
+                                radius: 58,
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.primaryContainer,
+                                backgroundImage: _photoBytes == null
+                                    ? null
+                                    : MemoryImage(_photoBytes!),
+                                child: _photoBytes == null
+                                    ? Icon(
+                                        Icons.add_a_photo_outlined,
+                                        size: 38,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onPrimaryContainer,
+                                      )
+                                    : null,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -513,11 +536,13 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                                   : 'Alterar foto',
                             ),
                           ),
-                          const Text(
+                          Text(
                             'Escolha da galeria ou tire uma foto na hora',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.black54,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -528,6 +553,7 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                       controller: _name,
                       label: 'Nome completo',
                       prefixIcon: Icons.person_outline,
+                      required: true,
                       validator: requiredField,
                     ),
                     const SizedBox(height: 12),
@@ -536,6 +562,7 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                       label: 'E-mail',
                       keyboardType: TextInputType.emailAddress,
                       prefixIcon: Icons.alternate_email,
+                      required: true,
                       validator: (value) => value?.contains('@') == true
                           ? null
                           : 'E-mail inválido',
@@ -553,6 +580,7 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                       label: 'CPF',
                       keyboardType: TextInputType.number,
                       prefixIcon: Icons.badge_outlined,
+                      required: true,
                       validator: (value) => digitsOnly(value ?? '').length == 11
                           ? null
                           : 'Informe 11 dígitos',
@@ -564,6 +592,7 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                       readOnly: true,
                       onTap: _pickBirthDate,
                       prefixIcon: Icons.cake_outlined,
+                      required: true,
                       validator: requiredField,
                       suffixIcon: const Icon(Icons.calendar_month),
                     ),
@@ -617,7 +646,8 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          labelText: 'Código da escola',
+                          labelText: 'Código da escola *',
+                          helperText: 'Campo obrigatório',
                           hintText: 'Ex.: 023',
                           prefixIcon: const Icon(Icons.school_outlined),
                           suffixIcon: _lookingUpSchool
@@ -628,9 +658,9 @@ class _StudentFormScreenState extends State<StudentFormScreen> {
                                   ),
                                 )
                               : _schoolId.text.isNotEmpty
-                              ? const Icon(
+                              ? Icon(
                                   Icons.check_circle,
-                                  color: Colors.green,
+                                  color: AcePalette.of(context).success,
                                 )
                               : null,
                         ),
@@ -736,6 +766,7 @@ class _StudentDetailScreenState extends State<StudentDetailScreen>
           if (AppScope.of(context).hasAnyProfile({'ESCOLA', 'ADMINISTRADOR'}) &&
               _student.isNotEmpty)
             IconButton(
+              tooltip: 'Editar perfil do atleta',
               onPressed: () async {
                 final changed = await pushPage<bool>(
                   context,
@@ -789,15 +820,15 @@ class _ProfileTab extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 48,
-            backgroundColor: AceColors.beigeStrong,
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             backgroundImage: photo,
             child: photo == null
                 ? Text(
                     textOf(student, ['nome'], fallback: 'A').substring(0, 1),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 34,
                       fontWeight: FontWeight.w900,
-                      color: AceColors.navy,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
                     ),
                   )
                 : null,
@@ -813,7 +844,9 @@ class _ProfileTab extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             textOf(student, ['escola_nome']),
-            style: const TextStyle(color: Colors.black54),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 22),
           SurfaceCard(
@@ -907,13 +940,13 @@ class _StatisticsTab extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           SurfaceCard(
-            color: AceColors.navy,
+            color: AcePalette.of(context).navy,
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.star_rounded,
                   size: 48,
-                  color: AceColors.orange,
+                  color: AcePalette.of(context).orange,
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -986,7 +1019,9 @@ class _HistoryTab extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 formatDate(item['data_hora'], withTime: true),
-                style: const TextStyle(color: Colors.black54),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const Divider(height: 24),
               Wrap(

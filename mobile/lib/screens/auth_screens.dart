@@ -4,6 +4,7 @@ import '../core/api_client.dart';
 import '../core/app_scope.dart';
 import '../core/data_helpers.dart';
 import '../core/theme.dart';
+import '../widgets/accessibility_panel.dart';
 import '../widgets/common.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,12 +18,16 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _email = TextEditingController(text: 'escola@ace.local');
   final _password = TextEditingController(text: 'Admin@123');
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
   bool _obscure = true;
 
   @override
   void dispose() {
     _email.dispose();
     _password.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
     super.dispose();
   }
 
@@ -46,140 +51,158 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final session = AppScope.of(context);
     return Scaffold(
+      floatingActionButton: const AccessibilityButton(onSurface: true),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 460),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Container(
-                      width: 118,
-                      height: 118,
-                      padding: const EdgeInsets.all(18),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(32),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AceColors.navy.withValues(alpha: .12),
-                            blurRadius: 28,
-                            offset: const Offset(0, 12),
+              child: FocusTraversalGroup(
+                policy: OrderedTraversalPolicy(),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 118,
+                        height: 118,
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.circular(32),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withValues(alpha: .16),
+                              blurRadius: 28,
+                              offset: const Offset(0, 12),
+                            ),
+                          ],
+                        ),
+                        child: const AceLogo(),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Bem-vindo ao ACE',
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Gestão esportiva escolar em um só lugar',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+                      AppTextFormField(
+                        controller: _email,
+                        label: 'E-mail',
+                        hint: 'Digite seu e-mail cadastrado',
+                        required: true,
+                        focusNode: _emailFocus,
+                        textInputAction: TextInputAction.next,
+                        onFieldSubmitted: (_) => _passwordFocus.requestFocus(),
+                        keyboardType: TextInputType.emailAddress,
+                        prefixIcon: Icons.alternate_email,
+                        validator: (value) {
+                          if (requiredField(value) != null) {
+                            return 'Informe o e-mail';
+                          }
+                          if (!value!.contains('@')) return 'E-mail inválido';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 14),
+                      AppTextFormField(
+                        controller: _password,
+                        label: 'Senha',
+                        hint: 'Digite sua senha',
+                        required: true,
+                        focusNode: _passwordFocus,
+                        obscureText: _obscure,
+                        prefixIcon: Icons.lock_outline,
+                        textInputAction: TextInputAction.done,
+                        validator: requiredField,
+                        suffixIcon: IconButton(
+                          tooltip: _obscure ? 'Mostrar senha' : 'Ocultar senha',
+                          onPressed: () => setState(() => _obscure = !_obscure),
+                          icon: Icon(
+                            _obscure
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () =>
+                              pushPage(context, const RecoveryRequestScreen()),
+                          child: const Text('Esqueceu a senha?'),
+                        ),
+                      ),
+                      FilledButton.icon(
+                        onPressed: session.busy ? null : _submit,
+                        icon: session.busy
+                            ? SizedBox.square(
+                                dimension: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AcePalette.of(context).onOrange,
+                                ),
+                              )
+                            : const Icon(Icons.login),
+                        label: Text(session.busy ? 'Entrando...' : 'Entrar'),
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Acessos de demonstração',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        alignment: WrapAlignment.center,
+                        children: [
+                          ActionChip(
+                            label: const Text('Escola'),
+                            avatar: const Icon(Icons.school_outlined, size: 18),
+                            onPressed: () => _demo('escola@ace.local'),
+                          ),
+                          ActionChip(
+                            label: const Text('Atleta'),
+                            avatar: const Icon(Icons.sports_outlined, size: 18),
+                            onPressed: () => _demo('atleta@ace.local'),
+                          ),
+                          ActionChip(
+                            label: const Text('Árbitro'),
+                            avatar: const Icon(
+                              Icons.sports_score_outlined,
+                              size: 18,
+                            ),
+                            onPressed: () => _demo('arbitro@ace.local'),
+                          ),
+                          ActionChip(
+                            label: const Text('Admin'),
+                            avatar: const Icon(
+                              Icons.admin_panel_settings_outlined,
+                              size: 18,
+                            ),
+                            onPressed: () => _demo('admin@ace.local'),
                           ),
                         ],
                       ),
-                      child: const AceLogo(),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Bem-vindo ao ACE',
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(
-                            fontWeight: FontWeight.w900,
-                            color: AceColors.navyDark,
-                          ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Gestão esportiva escolar em um só lugar',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                    const SizedBox(height: 28),
-                    AppTextFormField(
-                      controller: _email,
-                      label: 'E-mail',
-                      keyboardType: TextInputType.emailAddress,
-                      prefixIcon: Icons.alternate_email,
-                      validator: (value) {
-                        if (requiredField(value) != null) {
-                          return 'Informe o e-mail';
-                        }
-                        if (!value!.contains('@')) return 'E-mail inválido';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 14),
-                    AppTextFormField(
-                      controller: _password,
-                      label: 'Senha',
-                      obscureText: _obscure,
-                      prefixIcon: Icons.lock_outline,
-                      textInputAction: TextInputAction.done,
-                      validator: requiredField,
-                      suffixIcon: IconButton(
-                        onPressed: () => setState(() => _obscure = !_obscure),
-                        icon: Icon(
-                          _obscure
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () =>
-                            pushPage(context, const RecoveryRequestScreen()),
-                        child: const Text('Esqueceu a senha?'),
-                      ),
-                    ),
-                    FilledButton.icon(
-                      onPressed: session.busy ? null : _submit,
-                      icon: session.busy
-                          ? const SizedBox.square(
-                              dimension: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Icon(Icons.login),
-                      label: Text(session.busy ? 'Entrando...' : 'Entrar'),
-                    ),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'Acessos de demonstração',
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      alignment: WrapAlignment.center,
-                      children: [
-                        ActionChip(
-                          label: const Text('Escola'),
-                          avatar: const Icon(Icons.school_outlined, size: 18),
-                          onPressed: () => _demo('escola@ace.local'),
-                        ),
-                        ActionChip(
-                          label: const Text('Atleta'),
-                          avatar: const Icon(Icons.sports_outlined, size: 18),
-                          onPressed: () => _demo('atleta@ace.local'),
-                        ),
-                        ActionChip(
-                          label: const Text('Árbitro'),
-                          avatar: const Icon(
-                            Icons.sports_score_outlined,
-                            size: 18,
-                          ),
-                          onPressed: () => _demo('arbitro@ace.local'),
-                        ),
-                        ActionChip(
-                          label: const Text('Admin'),
-                          avatar: const Icon(
-                            Icons.admin_panel_settings_outlined,
-                            size: 18,
-                          ),
-                          onPressed: () => _demo('admin@ace.local'),
-                        ),
-                      ],
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -236,7 +259,10 @@ class _RecoveryRequestScreenState extends State<RecoveryRequestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Recuperar acesso')),
+      appBar: AppBar(
+        title: const Text('Recuperar acesso'),
+        actions: const [AccessibilityButton()],
+      ),
       body: PageBody(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,6 +279,9 @@ class _RecoveryRequestScreenState extends State<RecoveryRequestScreen> {
             AppTextFormField(
               controller: _email,
               label: 'E-mail',
+              hint: 'Digite seu e-mail cadastrado',
+              required: true,
+              textInputAction: TextInputAction.done,
               keyboardType: TextInputType.emailAddress,
               prefixIcon: Icons.alternate_email,
             ),
@@ -343,7 +372,10 @@ class _RecoveryConfirmScreenState extends State<RecoveryConfirmScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Confirmar recuperação')),
+      appBar: AppBar(
+        title: const Text('Confirmar recuperação'),
+        actions: const [AccessibilityButton()],
+      ),
       body: PageBody(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -352,12 +384,14 @@ class _RecoveryConfirmScreenState extends State<RecoveryConfirmScreen> {
             const SizedBox(height: 8),
             Text(
               'Código enviado para ${widget.email}',
-              style: const TextStyle(color: Colors.black54),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             if (widget.developmentCode != null) ...[
               const SizedBox(height: 12),
               SurfaceCard(
-                color: AceColors.beigeStrong,
+                color: Theme.of(context).colorScheme.primaryContainer,
                 child: Text(
                   'Ambiente de desenvolvimento: código ${widget.developmentCode}',
                   style: const TextStyle(fontWeight: FontWeight.w700),
@@ -378,6 +412,7 @@ class _RecoveryConfirmScreenState extends State<RecoveryConfirmScreen> {
               obscureText: _obscure,
               prefixIcon: Icons.lock_reset,
               suffixIcon: IconButton(
+                tooltip: _obscure ? 'Mostrar senha' : 'Ocultar senha',
                 onPressed: () => setState(() => _obscure = !_obscure),
                 icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
               ),
@@ -456,7 +491,10 @@ class _ApiSettingsScreenState extends State<ApiSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Configuração da API')),
+      appBar: AppBar(
+        title: const Text('Configuração da API'),
+        actions: const [AccessibilityButton()],
+      ),
       body: PageBody(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -475,7 +513,7 @@ class _ApiSettingsScreenState extends State<ApiSettingsScreen> {
             ),
             const SizedBox(height: 12),
             SurfaceCard(
-              color: AceColors.beigeStrong,
+              color: Theme.of(context).colorScheme.primaryContainer,
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

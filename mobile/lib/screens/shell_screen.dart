@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/app_scope.dart';
+import '../widgets/accessibility_panel.dart';
 import 'dashboard_screen.dart';
 import 'match_screens.dart';
 import 'menu_screen.dart';
@@ -37,17 +38,21 @@ class _MainShellState extends State<MainShell> {
       appBar: AppBar(
         title: Tooltip(
           message: 'Voltar ao início',
-          child: InkWell(
-            onTap: () => _select(0),
-            borderRadius: BorderRadius.circular(8),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Image.asset(
-                'assets/images/ace_wordmark_orange.png',
-                height: 50,
-                width: 126,
-                fit: BoxFit.contain,
-                errorBuilder: (_, _, _) => const Text('ACE!'),
+          child: Semantics(
+            button: true,
+            label: 'ACE. Voltar ao início',
+            child: InkWell(
+              onTap: () => _select(0),
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Image.asset(
+                  'assets/images/ace_wordmark_orange.png',
+                  height: 50,
+                  width: 126,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, _, _) => const Text('ACE!'),
+                ),
               ),
             ),
           ),
@@ -70,7 +75,7 @@ class _MainShellState extends State<MainShell> {
                     _shortProfile(session.profile),
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 11,
+                      fontSize: 12,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -79,6 +84,8 @@ class _MainShellState extends State<MainShell> {
             ),
         ],
       ),
+      floatingActionButton: const AccessibilityButton(onSurface: true),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: IndexedStack(index: _index, children: _pages),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,

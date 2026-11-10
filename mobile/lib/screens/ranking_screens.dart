@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../core/app_scope.dart';
 import '../core/data_helpers.dart';
-import '../core/theme.dart';
 import '../widgets/common.dart';
 import 'student_screens.dart';
 import 'team_screens.dart';
@@ -37,12 +36,14 @@ class _RankingsScreenState extends State<RankingsScreen>
     final body = Column(
       children: [
         Material(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           child: TabBar(
             controller: _tabs,
-            labelColor: AceColors.navy,
-            unselectedLabelColor: Colors.black45,
-            indicatorColor: AceColors.navy,
+            labelColor: Theme.of(context).colorScheme.primary,
+            unselectedLabelColor: Theme.of(
+              context,
+            ).colorScheme.onSurfaceVariant,
+            indicatorColor: Theme.of(context).colorScheme.primary,
             tabs: const [
               Tab(text: 'Escolas'),
               Tab(text: 'Equipes'),
@@ -236,6 +237,7 @@ class _RankingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final title = switch (type) {
       RankingType.schools => textOf(data, ['escola', 'nome']),
       RankingType.teams => textOf(data, ['time', 'time_nome']),
@@ -250,82 +252,95 @@ class _RankingCard extends StatelessWidget {
         '${textOf(data, ['escola'])} • ${intOf(data, ['partidas'])} partidas',
     };
     final points = intOf(data, ['pontos']);
-    return SurfaceCard(
-      onTap: () {
-        if (type == RankingType.teams) {
-          final id = textOf(data, ['time_id'], fallback: '');
-          if (id.isNotEmpty) pushPage(context, TeamDetailScreen(teamId: id));
-        }
-        if (type == RankingType.individual) {
-          final id = textOf(data, ['aluno_id'], fallback: '');
-          if (id.isNotEmpty) {
-            pushPage(context, StudentDetailScreen(studentId: id));
+    return Semantics(
+      label: '$positionº lugar. $title. $points pontos. $subtitle.',
+      button: type != RankingType.schools,
+      excludeSemantics: true,
+      child: SurfaceCard(
+        onTap: () {
+          if (type == RankingType.teams) {
+            final id = textOf(data, ['time_id'], fallback: '');
+            if (id.isNotEmpty) pushPage(context, TeamDetailScreen(teamId: id));
           }
-        }
-      },
-      child: Row(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: position <= 3
-                  ? AceColors.orange.withValues(alpha: .15)
-                  : AceColors.beigeStrong,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Text(
-              '$positionº',
-              style: TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 17,
-                color: position <= 3 ? AceColors.orange : AceColors.navy,
+          if (type == RankingType.individual) {
+            final id = textOf(data, ['aluno_id'], fallback: '');
+            if (id.isNotEmpty) {
+              pushPage(context, StudentDetailScreen(studentId: id));
+            }
+          }
+        },
+        child: Row(
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: position <= 3
+                    ? scheme.secondaryContainer
+                    : scheme.primaryContainer,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Text(
+                '$positionº',
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 17,
+                  color: position <= 3
+                      ? scheme.onSecondaryContainer
+                      : scheme.onPrimaryContainer,
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: scheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
+                  ),
+                  if (type == RankingType.individual) ...[
+                    const SizedBox(height: 5),
+                    Text(
+                      '${intOf(data, ['assistencias'])} assistências • Nota ${doubleOf(data, ['media_nota']).toStringAsFixed(1)}',
+                      style: TextStyle(color: scheme.primary, fontSize: 12),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.w800),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  subtitle,
-                  style: const TextStyle(color: Colors.black54, fontSize: 12),
-                ),
-                if (type == RankingType.individual) ...[
-                  const SizedBox(height: 5),
-                  Text(
-                    '${intOf(data, ['assistencias'])} assistências • Nota ${doubleOf(data, ['media_nota']).toStringAsFixed(1)}',
-                    style: const TextStyle(color: AceColors.navy, fontSize: 12),
+                  '$points',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 22,
+                    color: scheme.primary,
                   ),
-                ],
+                ),
+                Text(
+                  'pontos',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                '$points',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 22,
-                  color: AceColors.navy,
-                ),
-              ),
-              const Text(
-                'pontos',
-                style: TextStyle(fontSize: 11, color: Colors.black45),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

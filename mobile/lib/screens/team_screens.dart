@@ -173,12 +173,14 @@ class _TeamListScreenState extends State<TeamListScreen> {
                         width: 54,
                         height: 54,
                         decoration: BoxDecoration(
-                          color: AceColors.beigeStrong,
+                          color: Theme.of(context).colorScheme.primaryContainer,
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.shield_outlined,
-                          color: AceColors.navy,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onPrimaryContainer,
                           size: 30,
                         ),
                       ),
@@ -196,14 +198,18 @@ class _TeamListScreenState extends State<TeamListScreen> {
                             const SizedBox(height: 3),
                             Text(
                               '${textOf(team, ['modalidade'])} • ${textOf(team, ['categoria'])}',
-                              style: const TextStyle(color: Colors.black54),
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                             ),
                             const SizedBox(height: 7),
                             Text(
                               '${intOf(team, ['atletas'])} atletas • ${intOf(team, ['titulares'])} titulares',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
-                                color: AceColors.navy,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           ],
@@ -352,6 +358,7 @@ class _TeamFormScreenState extends State<TeamFormScreen> {
                 controller: _name,
                 label: 'Nome do time',
                 prefixIcon: Icons.shield_outlined,
+                required: true,
                 validator: requiredField,
               ),
               const SizedBox(height: 12),
@@ -364,7 +371,8 @@ class _TeamFormScreenState extends State<TeamFormScreen> {
               DropdownButtonFormField<String>(
                 initialValue: _modalityId,
                 decoration: const InputDecoration(
-                  labelText: 'Modalidade',
+                  labelText: 'Modalidade *',
+                  helperText: 'Campo obrigatório',
                   prefixIcon: Icon(Icons.sports),
                 ),
                 items: _modalities
@@ -383,7 +391,8 @@ class _TeamFormScreenState extends State<TeamFormScreen> {
               DropdownButtonFormField<String>(
                 initialValue: _categoryId,
                 decoration: const InputDecoration(
-                  labelText: 'Categoria',
+                  labelText: 'Categoria *',
+                  helperText: 'Campo obrigatório',
                   prefixIcon: Icon(Icons.category_outlined),
                 ),
                 items: _categories
@@ -404,6 +413,7 @@ class _TeamFormScreenState extends State<TeamFormScreen> {
                   controller: _schoolId,
                   label: 'ID da escola',
                   prefixIcon: Icons.school_outlined,
+                  required: true,
                   validator: requiredField,
                 ),
               ],
@@ -637,6 +647,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
         actions: [
           if (_canEdit && _team.isNotEmpty)
             IconButton(
+              tooltip: 'Editar time',
               onPressed: _editTeam,
               icon: const Icon(Icons.edit_outlined),
             ),
@@ -652,7 +663,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                 children: [
                   SurfaceCard(
-                    color: AceColors.navy,
+                    color: AcePalette.of(context).navy,
                     child: Row(
                       children: [
                         Container(
@@ -662,10 +673,10 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.shield_outlined,
                             size: 42,
-                            color: AceColors.navy,
+                            color: AcePalette.of(context).navy,
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -730,6 +741,7 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
                         '${asList(_team['atletas']).length} atleta(s) vinculados',
                     action: _canEdit
                         ? IconButton(
+                            tooltip: 'Adicionar atleta ao time',
                             onPressed: _addAthlete,
                             icon: const Icon(Icons.person_add_alt_1),
                           )
@@ -750,14 +762,18 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
                           child: Row(
                             children: [
                               CircleAvatar(
-                                backgroundColor: AceColors.beigeStrong,
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.primaryContainer,
                                 child: Text(
                                   textOf(athlete, [
                                     'numero_camisa',
                                   ], fallback: '?'),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.w900,
-                                    color: AceColors.navy,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimaryContainer,
                                   ),
                                 ),
                               ),
@@ -778,18 +794,22 @@ class _TeamDetailScreenState extends State<TeamDetailScreen> {
                                         ),
                                         if (boolOf(athlete, ['capitao'])) ...[
                                           const SizedBox(width: 6),
-                                          const Icon(
+                                          Icon(
                                             Icons.star,
                                             size: 18,
-                                            color: AceColors.orange,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.secondary,
                                           ),
                                         ],
                                       ],
                                     ),
                                     Text(
                                       '${textOf(athlete, ['posicao'])} • ${textOf(athlete, ['funcao'])}${boolOf(athlete, ['titular']) ? ' • Titular' : ''}',
-                                      style: const TextStyle(
-                                        color: Colors.black54,
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                   ],
@@ -900,7 +920,7 @@ class _AthletePickerScreenState extends State<AthletePickerScreen> {
                 const SizedBox(height: 14),
                 ..._items.map(
                   (item) => ListTile(
-                    tileColor: Colors.white,
+                    tileColor: Theme.of(context).colorScheme.surface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
